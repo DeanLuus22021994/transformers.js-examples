@@ -1,0 +1,8 @@
+{
+	"git.terminalAuthentication": true,
+	"git.enableSmartCommit": true,
+	"git.autofetch": true,
+	"git.confirmSync": false,
+	"git.fetchOnPull": true,
+	"git.submoduleRecursionDepth": 4
+}

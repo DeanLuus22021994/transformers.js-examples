@@ -1,0 +1,52 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run All Tests",
+			"type": "shell",
+			"command": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "Run Tests with Coverage",
+			"type": "shell",
+			"command": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
+			"group": "test"
+		},
+		{
+			"label": "Build All Projects",
+			"type": "shell",
+			"command": "npm run build",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "Initialize Dev Container",
+			"type": "shell",
+			"command": "cd .devcontainer && docker-compose up -d"
+		},
+		{
+			"label": "Run vanilla-js in Docker",
+			"type": "shell",
+			"command": "cd vanilla-js && docker-compose up",
+			"problemMatcher": []
+		},
+		{
+			"label": "Build and Pull Submodules",
+			"type": "shell",
+			"command": "bash .devcontainer/scripts/clone_submodules.sh && bash .devcontainer/scripts/build_all.sh",
+			"problemMatcher": []
+		},
+		{
+			"label": "Check GPU Status",
+			"type": "shell",
+			"command": "nvidia-smi || echo 'No GPU detected'",
+			"problemMatcher": []
+		}
+	]
+}

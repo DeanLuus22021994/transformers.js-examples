@@ -1,43 +1,73 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {
-	"name": "Node.js & TypeScript",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
+	"name": "Transformers.js Development Environment",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "dev",
+	"workspaceFolder": "/workspaces/transformers.js-examples",
 	"features": {
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {
-			"moby": true,
-			"azureDnsAutoDetection": true,
-			"installDockerBuildx": true,
-			"installDockerComposeSwitch": true,
+		"ghcr.io/devcontainers/features/git:1": {
 			"version": "latest",
-			"dockerDashComposeVersion": "v2"
+			"ppa": true
+		},
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "18"
 		},
 		"ghcr.io/devcontainers/features/nvidia-cuda:1": {
-			"installCudnn": true,
-			"cudaVersion": "12.5",
-			"cudnnVersion": "automatic"
+			"installCudnn": true
 		},
-		"ghcr.io/devcontainers-extra/features/act:1": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
 			"version": "latest"
 		},
-		"ghcr.io/devcontainers-extra/features/jest:2": {
-			"version": "latest"
+		"ghcr.io/devcontainers/features/go:1": {
+			"version": "1.21"
+		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"dbaeumer.vscode-eslint",
+				"esbenp.prettier-vscode",
+				"ms-vscode.vscode-typescript-next",
+				"ms-vscode.js-debug",
+				"github.copilot",
+				"github.vscode-github-actions",
+				"ms-vscode.vscode-node-azure-pack",
+				"ms-azuretools.vscode-docker",
+				"svelte.svelte-vscode",
+				"ms-python.python",
+				"golang.go"
+			],
+			"settings": {
+				"git.autofetch": true,
+				"git.enableSmartCommit": true,
+				"git.confirmSync": false
+			}
+		}
+	},
+	"postCreateCommand": "bash .devcontainer/scripts/clone_submodules.sh",
+	"postStartCommand": "bash .devcontainer/scripts/build_all.sh",
+	"remoteEnv": {
+		"PATH": "${containerEnv:PATH}:/usr/local/cuda/bin:/usr/local/go/bin",
+		"LD_LIBRARY_PATH": "${containerEnv:LD_LIBRARY_PATH}:/usr/local/cuda/lib64"
+	},
+	"remoteUser": "root",
+	"forwardPorts": [
+		3000,
+		3001,
+		8000,
+		8001
+	],
+	"portsAttributes": {
+		"3000": {
+			"label": "Web App",
+			"onAutoForward": "notify"
+		},
+		"3001": {
+			"label": "API Server",
+			"onAutoForward": "notify"
+		},
+		"8000": {
+			"label": "MCP Server",
+			"onAutoForward": "notify"
 		}
 	}
-
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
-
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "yarn install",
-
-	// Configure tool-specific properties.
-	// "customizations": {},
-
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
 }

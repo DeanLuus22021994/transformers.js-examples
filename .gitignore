@@ -1,0 +1,15 @@
+# Node modules and build artifacts
+node_modules
+dist
+.next
+
+# OS specific files
+.DS_Store
+
+# Do NOT ignore these directories (explicitly include)
+!.vscode
+!.vscode/**
+!.github
+!.github/**
+!.devcontainer
+!.devcontainer/**
