@@ -95,12 +95,3 @@ readdirSync(".").forEach((project) => {
 });
 
 console.log("All projects updated!");
-
-"remoteEnv": {
-	"PATH": "${containerEnv:PATH}:/usr/local/cuda/bin:/usr/local/go/bin",
-		"LD_LIBRARY_PATH": "${containerEnv:LD_LIBRARY_PATH}:/usr/local/cuda/lib64",
-			"NVIDIA_VISIBLE_DEVICES": "all",
-				"NVIDIA_DRIVER_CAPABILITIES": "all",
-					"HAS_GPU": "${localEnv:HAS_GPU:false}",
-						"GPU_MEM_GB": "${localEnv:GPU_MEM_GB:0}"
-},

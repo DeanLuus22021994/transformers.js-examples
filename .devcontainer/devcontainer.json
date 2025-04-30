@@ -4,8 +4,8 @@
 	"service": "dev",
 	"workspaceFolder": "/workspaces/transformers.js-examples",
 	"hostRequirements": {
-		"cpus": 4,
-		"memory": "8gb",
+		"cpus": 16,
+		"memory": "10gb",
 		"storage": "32gb",
 		"gpu": "optional"
 	},
@@ -15,7 +15,7 @@
 			"ppa": true
 		},
 		"ghcr.io/devcontainers/features/node:1": {
-			"version": "18"
+			"version": "20"
 		},
 		"ghcr.io/devcontainers/features/nvidia-cuda:1": {
 			"installCudnn": true

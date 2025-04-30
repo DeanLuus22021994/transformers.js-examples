@@ -14,8 +14,8 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 	python3-dev python3-pip python3-venv \
 	&& apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js (latest LTS) with optimized caching
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+# Install Node.js 20.x (required for npm@11.x) with optimized caching
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 	&& apt-get update \
 	&& apt-get install -y nodejs \
 	&& npm install -g npm@latest \
@@ -41,7 +41,7 @@ RUN git config --global url."https://${PERSONAL_ACCESS_TOKEN}@github.com/".inste
 
 # NVIDIA CUDA for GPU support if available (will gracefully degrade if GPU not present)
 RUN mkdir -p /etc/apt/keyrings \
-	&& wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb \
+	&& wget -O cuda-keyring_1.1-1_all.deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb \
 	&& dpkg -i cuda-keyring_1.1-1_all.deb \
 	&& apt-get update \
 	&& apt-get -y install --no-install-recommends cuda-toolkit-12-3 cuda-minimal-build-12-3 \
