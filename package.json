@@ -23,7 +23,8 @@
 		"docker:test:all": "./scripts/run-tests.sh --all",
 		"docker:test:coverage": "./scripts/run-tests.sh --coverage",
 		"docker:test:gpu": "./scripts/run-tests.sh --test=gpu",
-		"docker:test:no-gpu": "./scripts/run-tests.sh --test=no-gpu"
+		"docker:test:no-gpu": "./scripts/run-tests.sh --test=no-gpu",
+		"prepare": "husky"
 	},
 	"keywords": [
 		"transformers",
