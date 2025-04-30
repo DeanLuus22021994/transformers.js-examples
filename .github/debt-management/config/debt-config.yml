@@ -45,7 +45,7 @@ exclude_patterns:
 
 # Documentation settings
 documentation:
-  template_path: ".github/debt-management/templates/DEVELOPMENT_DEBT_TEMPLATE.md"
+  template_path: ".github/templates/dev_debt_template.md"
   sections:
     - overview
     - action_items
@@ -71,3 +71,4 @@ reporting:
 issue:
   label_prefix: "debt:"
   template: "technical-debt-issue"
+

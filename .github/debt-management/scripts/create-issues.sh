@@ -3,7 +3,7 @@
 
 REPO_PATH=$(pwd)
 CONFIG_FILE=".github/debt-management/config/debt-config.yml"
-REPORT_FILE="debt-report.md"
+REPORT_FILE=".github/reports/dev_debt/debt-report.md"
 ISSUE_TEMPLATE_FILE=".github/debt-management/templates/technical-debt-issue.md"
 
 # Check if personal access token is set
@@ -105,3 +105,4 @@ while IFS= read -r line; do
 done < "$REPORT_FILE"
 
 echo "Finished creating issues for technical debt items."
+

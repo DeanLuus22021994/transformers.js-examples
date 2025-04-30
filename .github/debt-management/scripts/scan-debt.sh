@@ -3,7 +3,7 @@
 
 # Load configuration
 CONFIG_FILE=".github/debt-management/config/debt-config.yml"
-REPORT_FILE="debt-report.md"
+REPORT_FILE=".github/reports/dev_debt/debt-report.md"
 
 if [ ! -f "$CONFIG_FILE" ]; then
     echo "Error: Config file not found at $CONFIG_FILE"
@@ -130,3 +130,4 @@ fi
 echo "" >> "$REPORT_FILE"
 echo "Report saved to: $REPORT_FILE"
 echo "Done."
+

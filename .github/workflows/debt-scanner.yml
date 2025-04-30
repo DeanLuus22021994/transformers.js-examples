@@ -25,4 +25,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: technical-debt-report
-          path: debt-report.md
+          path: .github/reports/dev_debt/debt-report.md
+
