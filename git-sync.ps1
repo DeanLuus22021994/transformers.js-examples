@@ -1,5 +1,5 @@
 # --- Automation Flag ---
-$autoConfirm = $true # Set to $false to require manual confirmation
+$autoConfirm = $true # Set permanently to avoid any user input
 
 <#
 .SYNOPSIS
@@ -112,17 +112,6 @@ Write-Host "- Modified files: $modifiedFiles"
 Write-Host "- Deleted files: $deletedFiles"
 Write-Host "- Total changes: $totalChanges"
 Write-Host "- PAT available: $patAvailable"
-
-# Confirmation prompt
-if (-not $autoConfirm) {
-	Write-ColorText -Text "`nReady to commit and push changes." -Color $Yellow
-	Write-Host "Press Enter to continue, Ctrl+C to cancel..." -NoNewline
-	$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-	Write-Host "`n"
-}
-else {
-	Write-ColorText -Text "Auto-confirm enabled: proceeding without manual intervention." -Color $Green
-}
 
 # Stage all changes
 Write-ColorText -Text "Staging all changes..." -Color $Blue
