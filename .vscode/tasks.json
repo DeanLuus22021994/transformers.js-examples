@@ -29,6 +29,41 @@
 			"group": "test"
 		},
 		{
+			"label": "Docker: Build Test Containers",
+			"type": "shell",
+			"command": "npm run docker:build",
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "Docker: Run All Tests",
+			"type": "shell",
+			"command": "npm run docker:test:all",
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "Docker: Run Tests with Coverage",
+			"type": "shell",
+			"command": "npm run docker:test:coverage",
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "Docker: Run GPU Tests",
+			"type": "shell",
+			"command": "npm run docker:test:gpu",
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "Docker: Run Non-GPU Tests",
+			"type": "shell",
+			"command": "npm run docker:test:no-gpu",
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
 			"label": "Build All Projects",
 			"type": "shell",
 			"command": "npm run build",
