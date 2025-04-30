@@ -60,7 +60,7 @@ describe('whisper-node speech recognition example', () => {
 
 	test('read_audio function correctly processes audio data', async () => {
 		// Import the read_audio function
-		const { read_audio } = await import('../whisper-node/utils.js');
+		const { read_audio } = await import('../../whisper-node/utils.js');
 
 		// Test with default sampling rate
 		const audioData = await read_audio('https://example.com/audio.wav');
@@ -81,7 +81,7 @@ describe('whisper-node speech recognition example', () => {
 	test('transcriber correctly processes audio and returns text', async () => {
 		// Import required modules
 		const { pipeline } = await import('@huggingface/transformers');
-		const { read_audio } = await import('../whisper-node/utils.js');
+		const { read_audio } = await import('../../whisper-node/utils.js');
 
 		// Create transcriber
 		const transcriber = await pipeline(
