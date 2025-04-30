@@ -1,4 +1,4 @@
-import * as Dockerode from 'dockerode';
+import Dockerode from 'dockerode';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { Logger } from '../utils/logger';
