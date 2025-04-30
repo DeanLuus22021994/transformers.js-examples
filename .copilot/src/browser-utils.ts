@@ -28,10 +28,10 @@ export async function setupBrowserEnvironment(config?: TransformersConfig): Prom
 		if (statusElement) {
 			statusElement.textContent = 'Transformers.js initialized successfully!';
 		}
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('Failed to initialize browser environment:', error);
 		if (statusElement) {
-			statusElement.textContent = `Error: ${error.message}`;
+			statusElement.textContent = `Error: ${error instanceof Error ? error.message : String(error)}`;
 		}
 	}
 }
@@ -45,23 +45,21 @@ export function setupFileUpload(
 	elementId: string,
 	onFileLoaded: (file: File, content: ArrayBuffer) => void
 ): void {
-	const fileUpload = document.getElementById(elementId) as HTMLInputElement;
-	if (!fileUpload) {
-		throw new Error(`File upload element not found: ${elementId}`);
-	}
+	const fileInput = document.getElementById(elementId) as HTMLInputElement;
+	if (!fileInput) return;
 
-	fileUpload.addEventListener('change', (event) => {
-		const target = event.target as HTMLInputElement;
-		const file = target.files?.[0];
+	fileInput.addEventListener('change', (event) => {
+		const files = fileInput.files;
+		if (!files || files.length === 0) return;
 
-		if (file) {
-			const reader = new FileReader();
-			reader.onload = (e) => {
-				const content = e.target?.result as ArrayBuffer;
-				onFileLoaded(file, content);
-			};
-			reader.readAsArrayBuffer(file);
-		}
+		const file = files[0];
+		const reader = new FileReader();
+		reader.onload = (e) => {
+			if (e.target?.result) {
+				onFileLoaded(file, e.target.result as ArrayBuffer);
+			}
+		};
+		reader.readAsArrayBuffer(file);
 	});
 }
 
@@ -72,27 +70,21 @@ export function setupFileUpload(
  */
 export function displayImage(imageData: string | Blob | File, containerId: string): void {
 	const container = document.getElementById(containerId);
-	if (!container) {
-		throw new Error(`Container element not found: ${containerId}`);
-	}
+	if (!container) return;
 
-	// Clear previous content
-	container.innerHTML = '';
-
-	const img = document.createElement('img');
+	let imgUrl: string;
 
 	if (typeof imageData === 'string') {
-		img.src = imageData;
+		imgUrl = imageData;
 	} else {
-		img.src = URL.createObjectURL(imageData);
+		imgUrl = URL.createObjectURL(imageData);
 	}
 
+	const img = document.createElement('img');
+	img.src = imgUrl;
 	img.style.maxWidth = '100%';
-	img.onload = () => {
-		if (typeof imageData !== 'string') {
-			URL.revokeObjectURL(img.src);
-		}
-	};
 
+	// Clear container and add new image
+	container.innerHTML = '';
 	container.appendChild(img);
 }

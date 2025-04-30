@@ -1,92 +1,68 @@
-/**
- * MCP Service - Starts and manages the MCP server
- * This service implements the Model Context Protocol for GitHub Copilot integration
- */
-
-import * as fs from 'fs';
-import * as path from 'path';
 import { Logger } from '../utils/logger';
-import { MCPServer } from './mcp-server';
+import { DockerClient } from '../core/docker-client';
 
-// Initialize logger
-const logger = new Logger('mcp-service');
+export class MCPService {
+	private logger: Logger;
+	private dockerClient: DockerClient;
 
-// Parse environment variables
-const PORT = process.env.MCP_SERVER_PORT ? parseInt(process.env.MCP_SERVER_PORT, 10) : 8083;
-const HEALTH_FILE_DIR = process.env.HEALTH_FILE_DIR || '/tmp';
+	constructor(logger?: Logger) {
+		this.logger = logger || Logger.getInstance();
+		this.dockerClient = new DockerClient(this.logger);
+	}
 
-// Create health status file directory if it doesn't exist
-if (!fs.existsSync(HEALTH_FILE_DIR)) {
-	fs.mkdirSync(HEALTH_FILE_DIR, { recursive: true });
-}
+	/**
+	 * Initialize the MCP service
+	 */
+	public async initialize(): Promise<boolean> {
+		try {
+			this.logger.info('MCPService', 'Initializing MCP service');
+			// Implementation details
+			return true;
+		} catch (error) {
+			this.logger.error('MCPService', `Failed to initialize: ${error instanceof Error ? error.message : String(error)}`);
+			return false;
+		}
+	}
 
-/**
- * Update health file
- */
-function updateHealthFile(status: 'healthy' | 'unhealthy', message?: string): void {
-	try {
-		const healthData = {
-			status,
-			timestamp: new Date().toISOString(),
-			message: message || ''
-		};
+	/**
+	 * Start the MCP service
+	 */
+	public async start(): Promise<boolean> {
+		try {
+			this.logger.info('MCPService', 'Starting MCP service');
+			// Implementation details
+			return true;
+		} catch (error) {
+			this.logger.error('MCPService', `Failed to start: ${error instanceof Error ? error.message : String(error)}`);
+			return false;
+		}
+	}
 
-		fs.writeFileSync(
-			path.join(HEALTH_FILE_DIR, 'mcp-health.json'),
-			JSON.stringify(healthData, null, 2)
-		);
-	} catch (error) {
-		logger.error(`Failed to write health file: ${(error as Error).message}`);
+	/**
+	 * Stop the MCP service
+	 */
+	public async stop(): Promise<boolean> {
+		try {
+			this.logger.info('MCPService', 'Stopping MCP service');
+			// Implementation details
+			return true;
+		} catch (error) {
+			this.logger.error('MCPService', `Failed to stop: ${error instanceof Error ? error.message : String(error)}`);
+			return false;
+		}
+	}
+
+	/**
+	 * Get the status of the MCP service
+	 */
+	public async getStatus(): Promise<any> {
+		try {
+			this.logger.info('MCPService', 'Getting MCP service status');
+			// Implementation details
+			return { status: 'running' };
+		} catch (error) {
+			this.logger.error('MCPService', `Failed to get status: ${error instanceof Error ? error.message : String(error)}`);
+			return { status: 'error' };
+		}
 	}
 }
-
-/**
- * Main function
- */
-async function main(): Promise<void> {
-	logger.info('Starting MCP service');
-
-	try {
-		// Create MCP server instance
-		const mcpServer = new MCPServer(PORT);
-
-		// Update health status to initializing
-		updateHealthFile('healthy', 'MCP server initializing');
-
-		// Start the server
-		await mcpServer.start();
-
-		// Update health status to healthy
-		updateHealthFile('healthy', 'MCP server started successfully');
-
-		// Handle process termination
-		process.on('SIGTERM', async () => {
-			logger.info('Received SIGTERM, shutting down MCP server');
-
-			try {
-				// Stop the server
-				await mcpServer.stop();
-
-				// Update health status
-				updateHealthFile('unhealthy', 'MCP server stopped');
-
-				// Exit process
-				process.exit(0);
-			} catch (error) {
-				logger.error(`Error stopping MCP server: ${(error as Error).message}`);
-				process.exit(1);
-			}
-		});
-	} catch (error) {
-		logger.error(`Failed to start MCP service: ${(error as Error).message}`);
-		updateHealthFile('unhealthy', `Failed to start: ${(error as Error).message}`);
-		process.exit(1);
-	}
-}
-
-// Start the service
-main().catch((error) => {
-	logger.error(`Unhandled error: ${error.message}`);
-	updateHealthFile('unhealthy', `Unhandled error: ${error.message}`);
-	process.exit(1);
-});

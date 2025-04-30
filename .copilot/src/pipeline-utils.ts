@@ -6,11 +6,11 @@ import { ModelType } from './types';
  * @returns Pipeline configuration
  */
 export function getPipelineConfig(modelType: ModelType): any {
-	// Basic implementation to make the import work
-	return {
-		type: modelType,
-		config: {}
-	};
+  // Basic implementation to make the import work
+  return {
+    type: modelType,
+    config: {}
+  };
 }
 
 /**
@@ -20,11 +20,11 @@ export function getPipelineConfig(modelType: ModelType): any {
  * @returns Initialized pipeline
  */
 export async function initializePipeline(modelType: ModelType, modelId?: string): Promise<any> {
-	// Basic implementation
-	console.log(`Initializing pipeline for ${modelType} with model ${modelId || 'default'}`);
-	return {
-		process: async (input: any) => {
-			return { result: `Processed ${input} with ${modelType}` };
-		}
-	};
+  // Basic implementation
+  console.log(`Initializing pipeline for ${modelType} with model ${modelId || 'default'}`);
+  return {
+    process: async (input: any) => {
+      return { result: `Processed ${input} with ${modelType}` };
+    }
+  };
 }
