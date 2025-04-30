@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testingConfig version="1.0.0">
+  <core>
+    <enabled>true</enabled>
+    <autoRunTests>false</autoRunTests>
+    <gpuTestsEnabled>true</gpuTestsEnabled>
+    <generateTestsForNewCode>true</generateTestsForNewCode>
+  </core>
+
+  <jest>
+    <coverage>
+      <enabled>true</enabled>
+      <threshold>80</threshold>
+      <reportOutputDir>./coverage</reportOutputDir>
+    </coverage>
+    <config>
+      <testMatch>
+        <pattern>**/__tests__/**/*.js?(x)</pattern>
+        <pattern>**/?(*.)+(spec|test).js?(x)</pattern>
+      </testMatch>
+      <testTimeout>10000</testTimeout>
+    </config>
+  </jest>
+
+  <gpuTesting>
+    <minRequiredMemoryMB>4000</minRequiredMemoryMB>
+    <skipIfMemoryInsufficient>true</skipIfMemoryInsufficient>
+    <detectScript>.scripts/detect-gpu.js</detectScript>
+    <testTags>
+      <tag>gpu</tag>
+      <tag>webgpu</tag>
+    </testTags>
+  </gpuTesting>
+
+  <browserTesting>
+    <browsers>
+      <browser name="chrome" enabled="true" />
+      <browser name="firefox" enabled="true" />
+      <browser name="safari" enabled="false" />
+    </browsers>
+    <viewport>
+      <width>1280</width>
+      <height>800</height>
+    </viewport>
+  </browserTesting>
+
+  <e2eTests>
+    <enabled>true</enabled>
+    <tool>playwright</tool>
+    <baseUrl>http://localhost:5173</baseUrl>
+    <screenshotOnFailure>true</screenshotOnFailure>
+  </e2eTests>
+
+  <autoGen>
+    <enabled>true</enabled>
+    <aiModel>gpt-4</aiModel>
+    <coverageThreshold>90</coverageThreshold>
+    <includeSnapshots>true</includeSnapshots>
+  </autoGen>
+</testingConfig>

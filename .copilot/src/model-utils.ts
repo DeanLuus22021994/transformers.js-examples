@@ -1,4 +1,4 @@
-import { ModelInfo, ModelType } from './types';
+import { ModelType, ModelInfo } from './types';
 
 /**
  * List of recommended models by task

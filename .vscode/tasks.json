@@ -4,7 +4,7 @@
 		{
 			"label": "Run All Tests",
 			"type": "shell",
-			"command": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+			"command": "node --experimental-vm-modules --max-old-space-size=8192 node_modules/jest/bin/jest.js",
 			"group": {
 				"kind": "test",
 				"isDefault": true
@@ -13,14 +13,20 @@
 		{
 			"label": "Run Tests with Coverage",
 			"type": "shell",
-			"command": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
+			"command": "node --experimental-vm-modules --max-old-space-size=8192 node_modules/jest/bin/jest.js --coverage",
 			"group": "test"
 		},
 		{
 			"label": "Run GPU Tests",
 			"type": "shell",
 			"command": "npm run test:gpu",
-			"group": "test"
+			"group": "test",
+			"options": {
+				"env": {
+					"WEBGPU_FORCE_DISCRETE": "1",
+					"GPU_MEMORY_LIMIT": "4096"
+				}
+			}
 		},
 		{
 			"label": "Run Non-GPU Tests",
@@ -54,7 +60,13 @@
 			"type": "shell",
 			"command": "npm run docker:test:gpu",
 			"group": "test",
-			"problemMatcher": []
+			"problemMatcher": [],
+			"options": {
+				"env": {
+					"NVIDIA_VISIBLE_DEVICES": "all",
+					"NVIDIA_DRIVER_CAPABILITIES": "compute,utility,graphics"
+				}
+			}
 		},
 		{
 			"label": "Docker: Run Non-GPU Tests",
@@ -94,6 +106,120 @@
 			"type": "shell",
 			"command": "nvidia-smi || echo 'No GPU detected'",
 			"problemMatcher": []
+		},
+		{
+			"label": "Monitor GPU Usage",
+			"type": "shell",
+			"command": "nvidia-smi -l 2",
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Optimize TypeScript Performance",
+			"type": "shell",
+			"command": "npm run build -- --incremental",
+			"group": "build",
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"label": "Clear TypeScript Cache",
+			"type": "shell",
+			"command": "rm -f .tsbuildinfo && npm run build",
+			"problemMatcher": []
+		},
+		{
+			"label": "Start WebGPU Dev Server",
+			"type": "shell",
+			"command": "npx vite --force",
+			"isBackground": true,
+			"problemMatcher": {
+				"pattern": {
+					"regexp": "."
+				},
+				"background": {
+					"activeOnStart": true,
+					"beginsPattern": ".",
+					"endsPattern": "ready in"
+				}
+			}
+		},
+		// Dev Debt Tasks
+		{
+			"label": "Process Dev Debt Files",
+			"type": "shell",
+			"command": "${command:dev-debt-processor.processDevDebt}",
+			"problemMatcher": [],
+			"group": "none",
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"showReuseMessage": false
+			}
+		},
+		{
+			"label": "Create Dev Debt Template",
+			"type": "shell",
+			"command": "${command:dev-debt-processor.createTemplate}",
+			"problemMatcher": [],
+			"group": "none"
+		},
+		{
+			"label": "View Dev Debt Logs",
+			"type": "shell",
+			"command": "${command:dev-debt-processor.viewLogs}",
+			"problemMatcher": [],
+			"group": "none"
+		},
+		// Testing tasks with dependencies
+		{
+			"label": "GPU Test Pipeline",
+			"dependsOn": [
+				"Check GPU Status",
+				"Build All Projects",
+				"Run GPU Tests"
+			],
+			"dependsOrder": "sequence",
+			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			}
+		},
+		{
+			"label": "Docker: Full Test Pipeline",
+			"dependsOn": [
+				"Docker: Build Test Containers",
+				"Docker: Run All Tests"
+			],
+			"dependsOrder": "sequence",
+			"group": "test"
+		},
+		{
+			"label": "Setup Development Environment",
+			"dependsOn": [
+				"Initialize Dev Container",
+				"Build and Pull Submodules"
+			],
+			"dependsOrder": "sequence",
+			"problemMatcher": []
+		},
+		{
+			"label": "Full Test Suite",
+			"dependsOn": [
+				"Docker: Build Test Containers",
+				"All Tests"
+			],
+			"dependsOrder": "sequence"
+		},
+		{
+			"label": "All Tests",
+			"dependsOn": [
+				"Run GPU Tests",
+				"Run Non-GPU Tests"
+			],
+			"dependsOrder": "parallel"
 		}
 	]
 }

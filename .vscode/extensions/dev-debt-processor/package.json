@@ -1,0 +1,66 @@
+{
+	"name": "dev-debt-processor",
+	"displayName": "Dev Debt Processor",
+	"description": "Automatically processes Dev_Debt.md files using GitHub Copilot",
+	"version": "0.1.0",
+	"engines": {
+		"vscode": "^1.60.0"
+	},
+	"dependencies": {
+		"xml2js": "^0.6.2"
+	},
+	"activationEvents": [
+		"onStartupFinished"
+	],
+	"main": "./extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "dev-debt-processor.processDevDebt",
+				"title": "Process Dev Debt Files"
+			},
+			{
+				"command": "dev-debt-processor.viewLogs",
+				"title": "View Dev Debt Processing Logs"
+			},
+			{
+				"command": "dev-debt-processor.createTemplate",
+				"title": "Create Dev Debt Template"
+			},
+			{
+				"command": "dev-debt-processor.toggleFeature",
+				"title": "Toggle Development Feature"
+			}
+		],
+		"configuration": {
+			"title": "Dev Debt Processor",
+			"properties": {
+				"devDebtProcessor.enabled": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enable automatic processing of Dev_Debt.md files on startup"
+				},
+				"devDebtProcessor.delaySeconds": {
+					"type": "number",
+					"default": 30,
+					"description": "Delay in seconds before processing Dev_Debt.md files"
+				},
+				"devDebtProcessor.strictValidation": {
+					"type": "boolean",
+					"default": true,
+					"description": "Strictly validate that Dev_Debt.md only references files in its directory"
+				},
+				"devDebtProcessor.autoArchive": {
+					"type": "boolean",
+					"default": true,
+					"description": "Automatically archive logs when VS Code is closed"
+				},
+				"devDebtProcessor.logRetentionDays": {
+					"type": "number",
+					"default": 30,
+					"description": "Number of days to keep archived logs before deletion"
+				}
+			}
+		}
+	}
+}

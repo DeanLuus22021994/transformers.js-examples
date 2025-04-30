@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<retrospectiveConfig version="1.0.0">
+  <core>
+    <enabled>false</enabled>
+    <autoGenerate>false</autoGenerate>
+    <includeMetrics>true</includeMetrics>
+    <storageLocation>./reports/retrospectives</storageLocation>
+  </core>
+
+  <schedule>
+    <frequency>monthly</frequency>
+    <dayOfMonth>1</dayOfMonth>
+    <reminderDays>3</reminderDays>
+  </schedule>
+
+  <metrics>
+    <codeMetrics>
+      <linesAdded>true</linesAdded>
+      <linesRemoved>true</linesRemoved>
+      <filesModified>true</filesModified>
+      <commitsCount>true</commitsCount>
+    </codeMetrics>
+
+    <qualityMetrics>
+      <bugs>true</bugs>
+      <vulnerabilities>true</vulnerabilities>
+      <codeSmells>true</codeSmells>
+      <testCoverage>true</testCoverage>
+      <performanceIssues>true</performanceIssues>
+    </qualityMetrics>
+
+    <teamMetrics>
+      <pullRequestsOpened>true</pullRequestsOpened>
+      <pullRequestsReviewed>true</pullRequestsReviewed>
+      <timeToMerge>true</timeToMerge>
+      <commentThreads>true</commentThreads>
+    </teamMetrics>
+  </metrics>
+
+  <reporting>
+    <format>
+      <html>true</html>
+      <markdown>true</markdown>
+      <pdf>false</pdf>
+      <json>true</json>
+    </format>
+    <sharing>
+      <email>false</email>
+      <slack>false</slack>
+      <teams>false</teams>
+      <github>true</github>
+    </sharing>
+  </reporting>
+
+  <templates>
+    <retrospective>.github/templates/retrospective/standard.md</retrospective>
+    <actionItems>.github/templates/retrospective/action-items.md</actionItems>
+  </templates>
+</retrospectiveConfig>

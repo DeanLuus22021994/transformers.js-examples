@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<devDebtConfig version="1.0.0">
+  <core>
+    <enabled>true</enabled>
+    <autoProcess>true</autoProcess>
+    <generateTemplates>true</generateTemplates>
+    <delaySeconds>30</delaySeconds>
+    <strictValidation>true</strictValidation>
+  </core>
+
+  <templates>
+    <defaultTemplate>.github/instructions/format_dev_debt_docs.instructions.md</defaultTemplate>
+    <templateTypes>
+      <template type="standard" path=".github/instructions/format_dev_debt_docs.instructions.md" />
+      <template type="feature" path=".github/templates/dev-debt/feature.md" />
+      <template type="refactor" path=".github/templates/dev-debt/refactor.md" />
+      <template type="performance" path=".github/templates/dev-debt/performance.md" />
+    </templateTypes>
+  </templates>
+
+  <processing>
+    <maxFilesToProcess>10</maxFilesToProcess>
+    <processTimeout>300000</processTimeout>
+    <preventDuplicates>true</preventDuplicates>
+    <prioritization>
+      <useAiPrioritization>true</useAiPrioritization>
+      <algorithmType>impact-based</algorithmType>
+    </prioritization>
+  </processing>
+
+  <output>
+    <baseLogPath>.dev-debt-logs</baseLogPath>
+    <retentionDays>90</retentionDays>
+    <generateSummary>true</generateSummary>
+    <alertThreshold>
+      <highPriority>5</highPriority>
+      <mediumPriority>10</mediumPriority>
+    </alertThreshold>
+  </output>
+
+  <directives>
+    <ignorePatterns>
+      <pattern>**/node_modules/**</pattern>
+      <pattern>**/dist/**</pattern>
+      <pattern>**/.git/**</pattern>
+    </ignorePatterns>
+    <includePatterns>
+      <pattern>**/*.js</pattern>
+      <pattern>**/*.ts</pattern>
+      <pattern>**/*.jsx</pattern>
+      <pattern>**/*.tsx</pattern>
+    </includePatterns>
+  </directives>
+</devDebtConfig>

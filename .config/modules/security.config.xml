@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<securityConfig version="1.0.0">
+  <core>
+    <enabled>true</enabled>
+    <autoScan>true</autoScan>
+    <scanFrequency>daily</scanFrequency>
+  </core>
+
+  <dependencyScanning>
+    <enabled>true</enabled>
+    <toolName>dependabot</toolName>
+    <severityThreshold>moderate</severityThreshold>
+    <autoFix>
+      <enabled>false</enabled>
+      <securityPatchesOnly>true</securityPatchesOnly>
+    </autoFix>
+  </dependencyScanning>
+
+  <staticAnalysis>
+    <enabled>true</enabled>
+    <toolName>codeql</toolName>
+    <languages>
+      <language>javascript</language>
+      <language>typescript</language>
+    </languages>
+  </staticAnalysis>
+
+  <secretsDetection>
+    <enabled>true</enabled>
+    <toolName>gitleaks</toolName>
+    <scanCommits>true</scanCommits>
+    <scanPRs>true</scanPRs>
+    <ignorePaths>
+      <path>.env.example</path>
+      <path>**/test/fixtures/**</path>
+    </ignorePaths>
+  </secretsDetection>
+
+  <modelSecurity>
+    <validateModelSources>true</validateModelSources>
+    <scanForPromptInjection>true</scanForPromptInjection>
+    <allowedModelHosts>
+      <host>huggingface.co</host>
+      <host>cdn.huggingface.co</host>
+      <host>cdn-lfs.huggingface.co</host>
+    </allowedModelHosts>
+  </modelSecurity>
+
+  <compliance>
+    <generateSBOM>true</generateSBOM>
+    <sbomFormat>cyclonedx</sbomFormat>
+    <sbomOutputPath>./security/sbom</sbomOutputPath>
+  </compliance>
+</securityConfig>

@@ -1,83 +1,64 @@
 {
-	"name": "Transformers.js Development Environment",
+	"name": "Transformers.js Development",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "dev",
-	"workspaceFolder": "/workspaces/transformers.js-examples",
-	"hostRequirements": {
-		"cpus": 16,
-		"memory": "10gb",
-		"storage": "32gb",
-		"gpu": "optional"
-	},
-	"features": {
-		"ghcr.io/devcontainers/features/git:1": {
-			"version": "latest",
-			"ppa": true
-		},
-		"ghcr.io/devcontainers/features/node:1": {
-			"version": "20"
-		},
-		"ghcr.io/devcontainers/features/nvidia-cuda:1": {
-			"installCudnn": true
-		},
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {
-			"version": "latest"
-		},
-		"ghcr.io/devcontainers/features/go:1": {
-			"version": "1.21"
-		}
-	},
+	"workspaceFolder": "/workspace",
 	"customizations": {
 		"vscode": {
 			"extensions": [
+				"ms-vscode.vscode-node-azure-pack",
+				"ms-azuretools.vscode-azurefunctions",
+				"ms-azuretools.vscode-azureresourcegroups",
+				"ms-azuretools.vscode-azurestorage",
+				"ms-azuretools.vscode-cosmosdb",
+				"ms-azuretools.azure-dev",
+				"ms-python.python",
+				"ms-python.vscode-pylance",
 				"dbaeumer.vscode-eslint",
 				"esbenp.prettier-vscode",
-				"ms-vscode.vscode-typescript-next",
-				"ms-vscode.js-debug",
 				"github.copilot",
-				"github.vscode-github-actions",
-				"ms-vscode.vscode-node-azure-pack",
-				"ms-azuretools.vscode-docker",
-				"svelte.svelte-vscode",
-				"ms-python.python",
-				"golang.go"
+				"github.copilot-chat",
+				"davidanson.vscode-markdownlint",
+				"bierner.markdown-preview-github-styles",
+				"bierner.markdown-mermaid",
+				"ms-vsliveshare.vsliveshare",
+				"streetsidesoftware.code-spell-checker"
 			],
 			"settings": {
-				"git.autofetch": true,
-				"git.enableSmartCommit": true,
-				"git.confirmSync": false
+				"editor.formatOnSave": true,
+				"editor.codeActionsOnSave": {
+					"source.fixAll.eslint": "explicit"
+				},
+				"files.trimTrailingWhitespace": true,
+				"azure.resourceFilter": [
+					"tag.environment=development"
+				],
+				"terminal.integrated.env.linux": {
+					"NODE_ENV": "development"
+				},
+				"javascript.updateImportsOnFileMove.enabled": "always"
 			}
 		}
 	},
-	"postCreateCommand": "bash .devcontainer/scripts/clone_submodules.sh && chmod +x .devcontainer/scripts/*.sh && /usr/local/bin/detect-gpu",
-	"postStartCommand": "bash .devcontainer/scripts/build_all.sh",
+	"remoteUser": "node",
 	"remoteEnv": {
-		"PATH": "${containerEnv:PATH}:/usr/local/cuda/bin:/usr/local/go/bin",
-		"LD_LIBRARY_PATH": "${containerEnv:LD_LIBRARY_PATH}:/usr/local/cuda/lib64",
-		"NVIDIA_VISIBLE_DEVICES": "all",
-		"NVIDIA_DRIVER_CAPABILITIES": "all",
-		"HAS_GPU": "${localEnv:HAS_GPU:false}",
-		"GPU_MEM_GB": "${localEnv:GPU_MEM_GB:0}"
+		"PATH": "${containerEnv:PATH}:/home/node/.azure/bin",
+		"AZURE_SUBSCRIPTION_ID": "${localEnv:AZURE_SUBSCRIPTION_ID}",
+		"AZURE_TENANT_ID": "${localEnv:AZURE_TENANT_ID}",
+		"NODE_ENV": "development"
 	},
-	"remoteUser": "root",
 	"forwardPorts": [
 		3000,
-		3001,
-		8000,
-		8001
+		8080,
+		5173
 	],
-	"portsAttributes": {
-		"3000": {
-			"label": "Web App",
-			"onAutoForward": "notify"
-		},
-		"3001": {
-			"label": "API Server",
-			"onAutoForward": "notify"
-		},
-		"8000": {
-			"label": "MCP Server",
-			"onAutoForward": "notify"
+	"postCreateCommand": "bash .devcontainer/scripts/setup/init.sh",
+	"postStartCommand": "bash .devcontainer/scripts/checks/readiness.sh && bash .devcontainer/scripts/precompile/trigger.sh",
+	"features": {
+		"ghcr.io/devcontainers/features/azure-cli:1": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "18"
 		}
 	}
 }

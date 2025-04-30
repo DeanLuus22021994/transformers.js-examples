@@ -1,7 +1,7 @@
 /**
  * CLI module for MCP server management
  */
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/logger.js';
 
 /**
  * Start the MCP server
@@ -12,7 +12,7 @@ export async function startMCPServer(port?: number): Promise<boolean> {
 		logger.info('mcp-cli', `Starting MCP server${port ? ` on port ${port}` : ''}`);
 
 		// Dynamically import to avoid circular dependencies
-		const { MCPServer } = await import('../mcp/mcp-server');
+		const { MCPServer } = await import('../mcp/mcp-server.js');
 
 		const server = new MCPServer(port);
 		await server.start();
@@ -42,7 +42,7 @@ export async function stopMCPServer(serverHost: string = 'localhost', serverPort
 
 		// For Docker Swarm deployments, we can stop the service
 		try {
-			const { DockerClient } = await import('../core/docker-client');
+			const { DockerClient } = await import('../core/docker-client.js');
 			const dockerClient = new DockerClient(logger);
 
 			// Find the MCP service
@@ -294,4 +294,14 @@ export async function listModels(serverHost: string = 'localhost', serverPort: n
 		logger.error('mcp-cli', `Failed to list models: ${(error as Error).message}`);
 		return [];
 	}
+}
+
+/**
+ * Start a specified service
+ * @param service The name of the service to start
+ */
+function startService(service: string): void {
+	// Implementation to be added
+	const logger = Logger.getInstance();
+	logger.info('mcp-cli', `Starting service: ${service}`);
 }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<auditConfig version="1.0.0">
+  <core>
+    <enabled>true</enabled>
+    <logConfigChanges>true</logConfigChanges>
+    <retentionDays>90</retentionDays>
+    <notifyOnChange>true</notifyOnChange>
+  </core>
+
+  <storage>
+    <path>./logs/config-audit</path>
+    <format>json</format>
+    <rotationFrequency>monthly</rotationFrequency>
+  </storage>
+
+  <events>
+    <event type="config_change" track="true" notify="true" />
+    <event type="feature_toggle" track="true" notify="false" />
+    <event type="dev_debt_created" track="true" notify="false" />
+    <event type="dev_debt_resolved" track="true" notify="true" />
+    <event type="security_issue" track="true" notify="true" />
+    <event type="test_failure" track="true" notify="true" />
+  </events>
+
+  <users>
+    <trackUserInfo>true</trackUserInfo>
+    <anonymize>false</anonymize>
+  </users>
+
+  <reporting>
+    <generateSummary>true</generateSummary>
+    <summaryFrequency>weekly</summaryFrequency>
+    <outputPath>./reports/audit</outputPath>
+  </reporting>
+
+  <compliance>
+    <exportFormat>csv</exportFormat>
+    <includeTimestamps>true</includeTimestamps>
+    <signAuditTrail>false</signAuditTrail>
+  </compliance>
+</auditConfig>

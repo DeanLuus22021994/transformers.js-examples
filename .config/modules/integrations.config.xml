@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<integrationsConfig version="1.0.0">
+  <github>
+    <enabled>true</enabled>
+    <createIssuesFromDevDebt>true</createIssuesFromDevDebt>
+    <linkPullRequestsToIssues>true</linkPullRequestsToIssues>
+    <labelAIGenerated>true</labelAIGenerated>
+    <webhooks>
+      <webhook name="issues" enabled="true" />
+      <webhook name="pull_request" enabled="true" />
+    </webhooks>
+  </github>
+
+  <azure>
+    <enabled>false</enabled>
+    <resourceGroup>transformers-examples</resourceGroup>
+    <tenantId>{{AZURE_TENANT_ID}}</tenantId>
+    <subscriptionId>{{AZURE_SUBSCRIPTION_ID}}</subscriptionId>
+    <services>
+      <service name="appService" enabled="false" />
+      <service name="storage" enabled="true" />
+      <service name="monitoring" enabled="true" />
+    </services>
+  </azure>
+
+  <docker>
+    <enabled>true</enabled>
+    <configPath>./docker-compose.yml</configPath>
+    <registry>ghcr.io</registry>
+    <buildArgs>
+      <arg name="NODE_ENV" value="development" />
+    </buildArgs>
+  </docker>
+
+  <huggingface>
+    <enabled>true</enabled>
+    <autoSync>true</autoSync>
+    <modelCache>
+      <enabled>true</enabled>
+      <path>.model-cache</path>
+      <maxSize>10GB</maxSize>
+    </modelCache>
+  </huggingface>
+
+  <websiteMonitoring>
+    <enabled>false</enabled>
+    <checkFrequency>hourly</checkFrequency>
+    <endpoints>
+      <endpoint url="https://transformers.js-examples.org" expectedStatus="200" />
+      <endpoint url="https://api.transformers.js-examples.org/health" expectedStatus="200" />
+    </endpoints>
+  </websiteMonitoring>
+
+  <slack>
+    <enabled>false</enabled>
+    <webhookUrl>{{SLACK_WEBHOOK_URL}}</webhookUrl>
+    <notifications>
+      <notification event="build_failure" enabled="true" />
+      <notification event="security_issue" enabled="true" />
+      <notification event="deployment" enabled="true" />
+    </notifications>
+  </slack>
+</integrationsConfig>

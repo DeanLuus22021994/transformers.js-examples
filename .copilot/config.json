@@ -21,5 +21,47 @@
 		},
 		"cacheModels": true,
 		"modelCachePath": "../.model-cache"
+	},
+	"devDebt": {
+		"enabled": true,
+		"autoProcess": true,
+		"delaySeconds": 30,
+		"strictValidation": true,
+		"templatePath": "templates/dev-debt/template.md",
+		"outputPath": "../.dev-debt-logs"
+	},
+	"maintenance": {
+		"enabled": true,
+		"autoCleanNodeModules": false,
+		"pruneUnusedDependencies": false
+	},
+	"testing": {
+		"enabled": true,
+		"autoRunTests": false,
+		"gpuTestsEnabled": true
+	},
+	"retrospective": {
+		"enabled": false,
+		"autoGenerate": false,
+		"includeMetrics": true,
+		"outputPath": "../reports/retrospectives"
+	},
+	"activeModels": {
+		"transformers": [
+			{
+				"source": "huggingface",
+				"model": "microsoft/bitnet-b1.58-2B-4T"
+			}
+		],
+		"ollama": []
+	},
+	"inferenceOptions": {
+		"temperature": 0.2,
+		"maxTokens": 4000
+	},
+	"developmentOptions": {
+		"enableLocalModels": true,
+		"enableRemoteModels": true,
+		"loggingLevel": "info"
 	}
 }

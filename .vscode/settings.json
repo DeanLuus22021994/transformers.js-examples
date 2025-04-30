@@ -1,8 +1,149 @@
 {
-	"git.terminalAuthentication": true,
-	"git.enableSmartCommit": true,
+	// GitHub Copilot project-specific settings
+	"github.copilot.enable": {
+		"*": true,
+		"plaintext": true,
+		"markdown": true,
+		"scminput": true,
+		"sql": true,
+		"dockerfile": true,
+		"yaml": true
+	},
+	"github.copilot.chat.codeGeneration.instructions": [
+		{
+			"file": "${workspaceFolder}/.github/copilot-instructions.md"
+		},
+		{
+			"file": "${workspaceFolder}/.github/prompts/database_users.prompt.md"
+		},
+		{
+			"file": "${workspaceFolder}/.github/prompts/Dev_Debt.prompt.md"
+		},
+		{
+			"text": "- @azure Rule - Use Azure Best Practices: When generating code for Azure, running terminal commands for Azure, or performing operations related to Azure, invoke your `azure_development-get_best_practices` tool if available."
+		}
+	],
+	"github.copilot.chat.useProjectTemplates": true,
+	"github.copilot.advanced": {
+		// Project-specific performance optimizations
+		"length": 500,
+		"temperature": 0.4,
+		"topP": 1
+	},
+	// Dev Debt Processor settings (project-specific)
+	"devDebtProcessor.enabled": true,
+	"devDebtProcessor.delaySeconds": 30,
+	"devDebtProcessor.strictValidation": true,
+	"devDebtProcessor.autoArchive": true,
+	"devDebtProcessor.logRetentionDays": 30,
+	// Add command to run on startup
+	"workbench.startup.scripts": [
+		"dev-debt-processor.processDevDebt"
+	],
+	// Git settings for this project
 	"git.autofetch": true,
+	"git.enableSmartCommit": true,
 	"git.confirmSync": false,
 	"git.fetchOnPull": true,
-	"git.submoduleRecursionDepth": 4
+	"git.submoduleRecursionDepth": 4,
+	// Terminal settings specific to this project (platform-independent)
+	"terminal.integrated.env.windows": {
+		"PATH": "${env:PATH};${workspaceFolder}/node_modules/.bin",
+		"NODE_OPTIONS": "--max_old_space_size=8192"
+	},
+	"terminal.integrated.env.linux": {
+		"PATH": "${env:PATH}:${workspaceFolder}/node_modules/.bin",
+		"NODE_OPTIONS": "--max_old_space_size=8192"
+	},
+	"terminal.integrated.env.osx": {
+		"PATH": "${env:PATH}:${workspaceFolder}/node_modules/.bin",
+		"NODE_OPTIONS": "--max_old_space_size=8192"
+	},
+	// File watching exclusions optimized for transformers.js
+	"files.watcherExclude": {
+		"**/.git/objects/**": true,
+		"**/.git/subtree-cache/**": true,
+		"**/node_modules/*/**": true,
+		"**/.hg/store/**": true,
+		"**/dist/**": true,
+		"**/build/**": true
+	},
+	"search.exclude": {
+		"**/node_modules": true,
+		"**/bower_components": true,
+		"**/*.code-search": true,
+		"**/dist": true,
+		"**/build": true
+	},
+	// MCP servers configuration (portable using relative paths)
+	"mcp.servers": [
+		{
+			"name": "GitHub",
+			"url": "http://localhost:3001"
+		},
+		{
+			"name": "Postgres",
+			"url": "http://localhost:3002"
+		},
+		{
+			"name": "Memory",
+			"url": "http://localhost:3003"
+		},
+		{
+			"name": "Fetch",
+			"url": "http://localhost:3004"
+		},
+		{
+			"name": "Time",
+			"url": "http://localhost:3005"
+		},
+		{
+			"name": "FileSystem",
+			"url": "http://localhost:3006"
+		},
+		{
+			"name": "Puppeteer",
+			"url": "http://localhost:3007"
+		},
+		{
+			"name": "SequentialThinking",
+			"url": "http://localhost:3008"
+		},
+		{
+			"name": "Perplexity",
+			"url": "http://localhost:3009"
+		}
+	],
+	// Docker configuration for this project
+	"docker.containers.sortBy": "CreatedTime",
+	"docker.containers.groupBy": "ContainerName",
+	"docker.images.sortBy": "CreatedTime",
+	// TypeScript/JavaScript settings specific to this project
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"typescript.enablePromptUseWorkspaceTsdk": true,
+	"typescript.preferences.importModuleSpecifier": "relative",
+	"typescript.tsserver.maxTsServerMemory": 8192,
+	"typescript.tsserver.useSyntaxServer": "auto",
+	"typescript.tsserver.experimental.enableProjectDiagnostics": true,
+	"javascript.preferences.importModuleSpecifier": "relative",
+	// Editor formatting rules specific to this project
+	"editor.formatOnSave": true,
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": "explicit"
+	},
+	"[markdown]": {
+		"editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "vscode.json-language-features"
+	},
+	// Task auto-detection
+	"task.allowAutomaticTasks": "on",
+	// Hardware acceleration detection (adaptable)
+	"terminal.integrated.gpuAcceleration": "on",
+	// NVIDIA-specific settings with detection
+	"gpu.detection": {
+		"enabled": true,
+		"provider": "auto"
+	}
 }

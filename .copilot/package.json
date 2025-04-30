@@ -11,7 +11,16 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "trace": "node dist/cli.js",
-    "test": "jest"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:azure": "node --experimental-vm-modules node_modules/jest/bin/jest.js azure-solution-insight",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
+    "analyze:dev-debt": "powershell -ExecutionPolicy Bypass -File ./CodeBriefAnalysis/analyze-dev-debt.ps1",
+    "create:dev-debt": "powershell -ExecutionPolicy Bypass -Command \"Import-Module ./CodeBriefAnalysis/Dev-Debt.psm1; New-DevDebtFile -Directory ./\"",
+    "toggle:dev-debt": "node ./scripts/toggle-feature.js devDebt",
+    "toggle:maintenance": "node ./scripts/toggle-feature.js maintenance",
+    "toggle:testing": "node ./scripts/toggle-feature.js testing",
+    "toggle:retrospective": "node ./scripts/toggle-feature.js retrospective"
   },
   "dependencies": {
     "uuid": "^9.0.0",

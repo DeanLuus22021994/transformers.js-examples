@@ -18,6 +18,7 @@ npm run docker:build
 ```
 
 This command will:
+
 - Detect if you have an NVIDIA GPU
 - Check if the NVIDIA Container Toolkit is properly installed
 - Build the appropriate Docker images based on your hardware
@@ -90,16 +91,19 @@ The Docker setup uses optimized volume mounts:
 If the NVIDIA GPU is not being detected in Docker:
 
 1. Make sure the NVIDIA Container Toolkit is installed:
+
    ```bash
    sudo apt-get install -y nvidia-container-toolkit
    ```
 
 2. Restart the Docker daemon:
+
    ```bash
    sudo systemctl restart docker
    ```
 
 3. Verify the NVIDIA runtime is working:
+
    ```bash
    docker run --rm --gpus all nvidia/cuda:12.0.0-runtime-ubuntu22.04 nvidia-smi
    ```

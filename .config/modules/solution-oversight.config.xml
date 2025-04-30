@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solutionOversightConfig version="1.0.0">
+  <core>
+    <enabled>true</enabled>
+    <scope>all-projects</scope>
+    <refreshInterval>3600</refreshInterval>
+  </core>
+
+  <traceability>
+    <analysisEnabled>true</analysisEnabled>
+    <correlationIdGeneration>true</correlationIdGeneration>
+    <distributedTracingEnabled>true</distributedTracingEnabled>
+    <spanCollectionLevel>selective</spanCollectionLevel>
+    <logCorrelation>true</logCorrelation>
+  </traceability>
+
+  <analysis>
+    <staticAnalysisEnabled>true</staticAnalysisEnabled>
+    <dynamicAnalysisEnabled>false</dynamicAnalysisEnabled>
+    <codeMetricsEnabled>true</codeMetricsEnabled>
+    <aggregationPeriod>daily</aggregationPeriod>
+    <retentionPeriod>90</retentionPeriod>
+  </analysis>
+
+  <reporting>
+    <dashboardEnabled>true</dashboardEnabled>
+    <autoGenerateReports>true</autoGenerateReports>
+    <reportFormats>
+      <format>html</format>
+      <format>json</format>
+      <format>markdown</format>
+    </reportFormats>
+    <notificationChannels>
+      <channel type="vscode" enabled="true" />
+      <channel type="email" enabled="false" />
+      <channel type="teams" enabled="false" />
+    </notificationChannels>
+  </reporting>
+
+  <iterationControl>
+    <iterationLength>7</iterationLength>
+    <autoStartIterations>true</autoStartIterations>
+    <trackVelocity>true</trackVelocity>
+    <retrospectivePrompt>true</retrospectivePrompt>
+  </iterationControl>
+
+  <azureDevOpsIntegration>
+    <enabled>false</enabled>
+    <organization>transformers-org</organization>
+    <project>transformers-js</project>
+    <workItemSynchronization>true</workItemSynchronization>
+    <testResultsIntegration>true</testResultsIntegration>
+    <pipelineIntegration>true</pipelineIntegration>
+    <secureConnection>
+      <useServicePrincipal>true</useServicePrincipal>
+      <tenantId>{{AZURE_TENANT_ID}}</tenantId>
+      <clientId>{{AZURE_CLIENT_ID}}</clientId>
+      <keyVaultReference>azure-devops-sp</keyVaultReference>
+    </secureConnection>
+  </azureDevOpsIntegration>
+
+  <azureMonitorIntegration>
+    <enabled>false</enabled>
+    <applicationInsights>
+      <enabled>true</enabled>
+      <instrumentationKey>{{AI_INSTRUMENTATION_KEY}}</instrumentationKey>
+      <connectionString>{{AI_CONNECTION_STRING}}</connectionString>
+      <samplingPercentage>100</samplingPercentage>
+      <disableTelemetry>false</disableTelemetry>
+    </applicationInsights>
+    <logAnalytics>
+      <enabled>true</enabled>
+      <workspaceId>{{LOG_ANALYTICS_WORKSPACE_ID}}</workspaceId>
+      <keyVaultReference>log-analytics-key</keyVaultReference>
+      <customTables>
+        <table name="DevDebtTracking_CL" enabled="true" />
+        <table name="CodeMetrics_CL" enabled="true" />
+      </customTables>
+    </logAnalytics>
+    <alerts>
+      <enabled>true</enabled>
+      <actionGroups>
+        <group id="devteam" name="Development Team" />
+      </actionGroups>
+      <alertRules>
+        <rule name="HighPriorityDevDebt" enabled="true" severity="2" />
+        <rule name="TestCoverageDrop" enabled="true" severity="3" />
+      </alertRules>
+    </alerts>
+  </azureMonitorIntegration>
+</solutionOversightConfig>

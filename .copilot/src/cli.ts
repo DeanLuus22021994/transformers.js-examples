@@ -24,9 +24,17 @@ yargs(hideBin(process.argv))
 				type: 'string',
 			});
 	}, (argv) => {
-		const result = shellIntegration.executeCommand(argv.command, argv.directory || process.cwd());
-		console.log(result.output);
-		process.exit(result.exitCode);
+		// Fix for string | undefined error on line 29
+		const directory = argv.directory || process.cwd();
+		// Fix the command parameter to ensure it's always a string
+		if (typeof argv.command === 'string') {
+			const result = shellIntegration.executeCommand(argv.command, directory);
+			console.log(result.output);
+			process.exit(result.exitCode);
+		} else {
+			console.error('Error: Command is required');
+			process.exit(1);
+		}
 	})
 
 	.command('archive', 'Archive current terminal session', {}, (argv) => {
@@ -56,13 +64,22 @@ yargs(hideBin(process.argv))
 			});
 	}, (argv) => {
 		try {
-			const data = archiveUtility.extractArchive(argv.archiveName);
+			// Fix the archiveName parameter to ensure it's always a string
+			if (typeof argv.archiveName === 'string') {
+				const data = archiveUtility.extractArchive(argv.archiveName);
 
-			if (argv.output) {
-				fs.writeFileSync(argv.output, JSON.stringify(data, null, 2));
-				console.log(`Archive extracted to ${argv.output}`);
+				// Fix for string | undefined error on line 61
+				const outputPath = argv.output || '';
+
+				if (outputPath) {
+					fs.writeFileSync(outputPath, JSON.stringify(data, null, 2));
+					console.log(`Archive extracted to ${outputPath}`);
+				} else {
+					console.log(JSON.stringify(data, null, 2));
+				}
 			} else {
-				console.log(JSON.stringify(data, null, 2));
+				console.error('Error: Archive name is required');
+				process.exit(1);
 			}
 		} catch (error) {
 			console.error(`Error extracting archive: ${error instanceof Error ? error.message : String(error)}`);

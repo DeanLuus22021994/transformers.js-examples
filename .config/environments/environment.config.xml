@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environmentConfig version="1.0.0">
+  <environments>
+    <environment name="development">
+      <devDebt>
+        <autoProcess>true</autoProcess>
+        <delaySeconds>30</delaySeconds>
+      </devDebt>
+      <testing>
+        <autoRunTests>true</autoRunTests>
+        <gpuTestsEnabled>true</gpuTestsEnabled>
+      </testing>
+      <maintenance>
+        <runLinters>true</runLinters>
+      </maintenance>
+      <integrations>
+        <github>
+          <labelAIGenerated>false</labelAIGenerated>
+        </github>
+        <docker>
+          <buildArgs>
+            <arg name="NODE_ENV" value="development" />
+          </buildArgs>
+        </docker>
+      </integrations>
+      <logging>
+        <level>debug</level>
+      </logging>
+    </environment>
+
+    <environment name="staging">
+      <devDebt>
+        <autoProcess>false</autoProcess>
+      </devDebt>
+      <testing>
+        <autoRunTests>true</autoRunTests>
+        <gpuTestsEnabled>true</gpuTestsEnabled>
+      </testing>
+      <maintenance>
+        <runLinters>true</runLinters>
+      </maintenance>
+      <integrations>
+        <github>
+          <labelAIGenerated>true</labelAIGenerated>
+        </github>
+        <docker>
+          <buildArgs>
+            <arg name="NODE_ENV" value="staging" />
+          </buildArgs>
+        </docker>
+      </integrations>
+      <logging>
+        <level>info</level>
+      </logging>
+    </environment>
+
+    <environment name="production">
+      <devDebt>
+        <autoProcess>false</autoProcess>
+      </devDebt>
+      <testing>
+        <autoRunTests>false</autoRunTests>
+        <gpuTestsEnabled>false</gpuTestsEnabled>
+      </testing>
+      <maintenance>
+        <runLinters>false</runLinters>
+      </maintenance>
+      <integrations>
+        <github>
+          <labelAIGenerated>true</labelAIGenerated>
+        </github>
+        <docker>
+          <buildArgs>
+            <arg name="NODE_ENV" value="production" />
+          </buildArgs>
+        </docker>
+      </integrations>
+      <logging>
+        <level>warn</level>
+      </logging>
+    </environment>
+
+    <environment name="ci">
+      <devDebt>
+        <autoProcess>false</autoProcess>
+      </devDebt>
+      <testing>
+        <autoRunTests>true</autoRunTests>
+        <gpuTestsEnabled>true</gpuTestsEnabled>
+      </testing>
+      <maintenance>
+        <runLinters>true</runLinters>
+      </maintenance>
+      <integrations>
+        <github>
+          <labelAIGenerated>true</labelAIGenerated>
+        </github>
+      </integrations>
+      <logging>
+        <level>info</level>
+      </logging>
+    </environment>
+  </environments>
+</environmentConfig>

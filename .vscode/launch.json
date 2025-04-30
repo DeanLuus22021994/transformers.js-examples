@@ -28,7 +28,46 @@
 			"request": "launch",
 			"name": "Launch Chrome against localhost",
 			"url": "http://localhost:5173",
-			"webRoot": "${workspaceFolder}"
+			"webRoot": "${workspaceFolder}",
+			"runtimeArgs": [
+				"--enable-features=Vulkan,WebGPU",
+				"--enable-gpu-rasterization",
+				"--enable-zero-copy",
+				"--enable-webgpu-developer-features",
+				"--use-vulkan=native",
+				"--enable-unsafe-webgpu"
+			]
+		},
+		{
+			"type": "chrome",
+			"request": "launch",
+			"name": "WebGPU Debug",
+			"url": "http://localhost:5173",
+			"webRoot": "${workspaceFolder}",
+			"runtimeArgs": [
+				"--enable-features=Vulkan,WebGPU",
+				"--enable-gpu-rasterization",
+				"--enable-webgpu-developer-features",
+				"--use-vulkan=native",
+				"--gpu-memory-buffer-video-dimensions=3840x2160",
+				"--ignore-gpu-blocklist"
+			],
+			"sourceMaps": true,
+			"trace": true
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Debug CLI (with GPU)",
+			"program": "${workspaceFolder}/.copilot/dist/cli.js",
+			"args": [
+				"--help"
+			],
+			"console": "integratedTerminal",
+			"internalConsoleOptions": "neverOpen",
+			"env": {
+				"NODE_OPTIONS": "--enable-webgpu-developer-features --max-old-space-size=8192"
+			}
 		}
 	]
 }

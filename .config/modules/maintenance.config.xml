@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<maintenanceConfig version="1.0.0">
+  <core>
+    <enabled>true</enabled>
+    <autoCleanNodeModules>false</autoCleanNodeModules>
+    <pruneUnusedDependencies>false</pruneUnusedDependencies>
+    <runLinters>true</runLinters>
+  </core>
+
+  <dependencies>
+    <automatedUpdates>
+      <enabled>true</enabled>
+      <minorVersionsOnly>true</minorVersionsOnly>
+      <excludePackages>
+        <package>webpack</package>
+        <package>typescript</package>
+      </excludePackages>
+    </automatedUpdates>
+    <dependencyGraph>
+      <generate>true</generate>
+      <includeDevDependencies>true</includeDevDependencies>
+    </dependencyGraph>
+  </dependencies>
+
+  <codeQuality>
+    <enableLinting>true</enableLinting>
+    <fixAutomatically>false</fixAutomatically>
+    <linters>
+      <linter name="eslint" enabled="true" />
+      <linter name="prettier" enabled="true" />
+      <linter name="stylelint" enabled="false" />
+    </linters>
+    <thresholds>
+      <complexity>10</complexity>
+      <duplication>5</duplication>
+      <coverage>80</coverage>
+    </thresholds>
+  </codeQuality>
+
+  <performance>
+    <bundleAnalysis>true</bundleAnalysis>
+    <compressionAnalysis>true</compressionAnalysis>
+    <runtimeProfiling>false</runtimeProfiling>
+  </performance>
+
+  <schedule>
+    <frequency>weekly</frequency>
+    <day>sunday</day>
+    <time>01:00</time>
+    <timezone>UTC</timezone>
+  </schedule>
+</maintenanceConfig>

@@ -24,11 +24,11 @@ This system provides a seamless Docker integration for transformers.js examples,
 1. Clone this repository
 2. Run the initialization script:
 
-```
-cd .copilot/docker-integration
-npm install
-node scripts/init.js
-```
+    ```bash
+    cd .copilot/docker-integration
+    npm install @transformers/docker-integration
+    node scripts/init.js
+    ```
 
 3. Open a new terminal in VS Code to automatically initialize the Docker integration
 

@@ -10,7 +10,7 @@ services:
     image: transformersjs-docker-integration:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - .:/app
+      - .:/app:ro  # Mark app volume as read-only for security
       - ${HOME}/.transformersjs-cache:/cache
     environment:
       - NODE_ENV=production
@@ -23,47 +23,35 @@ services:
       resources:
         limits:
           memory: 512M
+        reservations:
+          memory: 128M  # Minimum memory reservation
 
-  # Service for model caching and optimization
-  transformers-cache-manager:
+  # GPU-accelerated model execution service
+  transformers-gpu-runtime:
     build:
       context: .
-      dockerfile: ./docker/Dockerfile.cache
-    image: transformersjs-cache-manager:latest
+      dockerfile: ./docker/Dockerfile.core
+      args:
+        - WITH_GPU=true
+    image: transformersjs-gpu-runtime:latest
     volumes:
       - ${HOME}/.transformersjs-cache:/cache
-      - .:/app
-    environment:
-      - CACHE_SIZE=10GB
-      - CACHE_TTL=30d
-      - PRUNE_INTERVAL=24h
-    depends_on:
-      - transformers-docker-core
-    networks:
-      - transformers-net
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-  # Service for handling Copilot integration
-  transformers-copilot-integration:
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile.copilot
-    image: transformersjs-copilot-integration:latest
-    volumes:
-      - .:/app
-      - ${HOME}/.transformersjs-cache:/cache
+      - .:/app:ro  # Mark app volume as read-only for security
     environment:
       - NODE_ENV=production
+      - GPU_MEMORY_LIMIT=4096
+      - WEBGPU_FORCE_DISCRETE=1
     depends_on:
       - transformers-docker-core
     networks:
       - transformers-net
     deploy:
       resources:
-        limits:
-          memory: 256M
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
   # MCP Server for Model Context Protocol implementation
   transformers-mcp-server:
@@ -73,7 +61,7 @@ services:
     image: transformersjs-mcp-server:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - .:/app
+      - .:/app:ro  # Mark app volume as read-only for security
       - ${HOME}/.transformersjs-cache:/cache
     ports:
       - "8083:8083"
@@ -90,9 +78,16 @@ services:
       resources:
         limits:
           memory: 512M
+        reservations:
+          memory: 128M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 # Define network for all services
 networks:
   transformers-net:
-    driver: overlay
-    attachable: true
+    driver: bridge

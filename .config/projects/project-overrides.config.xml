@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectOverridesConfig version="1.0.0">
+  <projects>
+    <project path="dean-transformers/whisper-word-timestamps">
+      <description>Web application demonstrating Whisper model with word-level timestamps</description>
+      <overrides>
+        <testing>
+          <gpuTestsEnabled>true</gpuTestsEnabled>
+          <testTimeout>60000</testTimeout>
+          <e2eTests>
+            <baseUrl>http://localhost:5173</baseUrl>
+          </e2eTests>
+        </testing>
+        <devDebt>
+          <strictValidation>false</strictValidation>
+        </devDebt>
+        <vite>
+          <plugins>
+            <tailwindcss enabled="true" />
+            <react enabled="true" />
+          </plugins>
+        </vite>
+      </overrides>
+    </project>
+
+    <project path="dean-transformers/janus-pro-webgpu">
+      <description>WebGPU accelerated transformer models</description>
+      <overrides>
+        <testing>
+          <gpuTestsEnabled>true</gpuTestsEnabled>
+          <minRequiredMemoryMB>6000</minRequiredMemoryMB>
+        </testing>
+        <maintenance>
+          <performance>
+            <bundleAnalysis>true</bundleAnalysis>
+            <runtimeProfiling>true</runtimeProfiling>
+          </performance>
+        </maintenance>
+      </overrides>
+    </project>
+
+    <project path="dean-transformers/next-server">
+      <description>Next.js server for transformer models</description>
+      <overrides>
+        <testing>
+          <gpuTestsEnabled>false</gpuTestsEnabled>
+        </testing>
+        <devDebt>
+          <strictValidation>true</strictValidation>
+        </devDebt>
+        <integrations>
+          <azure>
+            <enabled>true</enabled>
+            <services>
+              <service name="appService" enabled="true" />
+            </services>
+          </azure>
+        </integrations>
+      </overrides>
+    </project>
+  </projects>
+</projectOverridesConfig>
