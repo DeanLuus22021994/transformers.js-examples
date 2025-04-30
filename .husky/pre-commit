@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # Access the PAT from environment variable
 PAT=$PERSONAL_ACCESS_TOKEN
 
