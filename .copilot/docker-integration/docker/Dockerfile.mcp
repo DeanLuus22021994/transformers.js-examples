@@ -1,0 +1,34 @@
+FROM node:18-alpine
+
+# Install Docker client for managing Docker from within the container
+RUN apk add --no-cache docker-cli docker-compose
+
+# Install additional dependencies
+RUN apk add --no-cache curl jq bash git
+
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm ci --production
+
+# Copy source code
+COPY . .
+
+# Build TypeScript
+RUN npm run build
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV LOG_LEVEL=info
+ENV MCP_SERVER_PORT=8083
+
+# Expose port
+EXPOSE 8083
+
+# Set entrypoint
+ENTRYPOINT ["node", "dist/mcp/mcp-service.js"]
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+	CMD node ./dist/health-check.js mcp || exit 1

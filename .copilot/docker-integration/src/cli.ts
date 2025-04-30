@@ -5,6 +5,8 @@ import { hideBin } from 'yargs/helpers';
 import { DockerIntegrationManager } from './core/docker-integration-manager';
 import { Logger } from './utils/logger';
 import { ConfigManager } from './utils/config-manager';
+import { MCPServer } from './mcp/mcp-server';
+import { SwarmManager } from './swarm/swarm-manager';
 
 // Initialize logger
 const logger = Logger.getInstance();

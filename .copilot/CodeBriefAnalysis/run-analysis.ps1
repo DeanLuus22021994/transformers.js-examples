@@ -1,2 +1,3 @@
-Import-Module "$PSScriptRoot\CodeBriefAnalysis\CodeBriefAnalysis.psm1"
+# Run the CodeBriefAnalysis module
+Import-Module "$PSScriptRoot\CodeBriefAnalysis.psm1"
 Invoke-CodeBriefAnalysis

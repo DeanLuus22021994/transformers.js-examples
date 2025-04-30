@@ -6,6 +6,12 @@ dist
 # OS specific files
 .DS_Store
 
+# Git internal folders are normally ignored
+.git
+
+# But explicitly include the pre-commit hook
+!.git/hooks/pre-commit
+
 # Do NOT ignore these directories (explicitly include)
 !.copilot
 !.vscode

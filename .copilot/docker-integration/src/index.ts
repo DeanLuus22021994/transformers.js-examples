@@ -6,6 +6,9 @@ import { SwarmManager } from './swarm/swarm-manager';
 import { SwarmConfig } from './swarm/swarm-config';
 import { CacheManager } from './caching/cache-manager';
 import { TerminalHookManager } from './hooks/terminal-hook-manager';
+import { MCPServer } from './mcp/mcp-server';
+import { MCPCopilotBridge } from './mcp/mcp-copilot-bridge';
+import * as MCPCommands from './mcp/mcp-cli';
 
 // Export all modules
 export {
@@ -16,7 +19,10 @@ export {
 	SwarmManager,
 	SwarmConfig,
 	CacheManager,
-	TerminalHookManager
+	TerminalHookManager,
+	MCPServer,
+	MCPCopilotBridge,
+	MCPCommands
 };
 
 // Singleton instance of the Docker Integration Manager
