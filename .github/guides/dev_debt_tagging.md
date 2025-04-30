@@ -1,9 +1,11 @@
 # Development Debt Tagging System
 
 ## Overview
+
 The DIR.TAG system provides a standardized way to track, categorize, and resolve technical debt through comment-based tagging.
 
 ## Tag Format
+
 ```
 // DIR.TAG: #category #priority
 // Description of the issue
@@ -11,6 +13,7 @@ The DIR.TAG system provides a standardized way to track, categorize, and resolve
 ```
 
 ## Supported Categories
+
 - #architecture - Structural issues requiring redesign
 - #performance - Optimizations needed
 - #security - Security concerns or vulnerabilities
@@ -21,12 +24,14 @@ The DIR.TAG system provides a standardized way to track, categorize, and resolve
 - #dependency - Outdated or problematic dependencies
 
 ## Priority Levels
+
 - #p0 - Critical (blocker)
 - #p1 - High priority
 - #p2 - Medium priority
 - #p3 - Low priority
 
 ## Automation Integration
+
 The DIR.TAG system integrates with our Jest-based monitoring system:
 
 1. Tags are automatically detected by `jest --watch`
