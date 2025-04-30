@@ -45,6 +45,7 @@ if (-not (Test-Path ".git")) {
 # Set Git configuration without prompting
 git config user.name $GIT_USERNAME
 git config user.email $GIT_EMAIL
+git config --global credential."$($EXPECTED_ORIGIN)".username $GIT_USERNAME
 Write-ColorText -Text "Git configured for user: $GIT_USERNAME <$GIT_EMAIL>" -Color $Green
 
 # Check current branch
