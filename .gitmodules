@@ -1,16 +1,6 @@
-[submodule "transformers.js"]
-	path = transformers.js
-	url = https://github.com/huggingface/transformers.js.git
-	branch = main
-
-[submodule "runner-images"]
-	path = runner-images
-	url = https://github.com/DeanLuus22021994/runner-images.git
-	branch = main
-
-[submodule "servers"]
-	path = servers
-	url = https://github.com/DeanLuus22021994/servers.git
+[submodule "github-mcp-server"]
+	path = github-mcp-server
+	url = https://github.com/DeanLuus22021994/github-mcp-server.git
 	branch = main
 
 [submodule "starter-workflows"]
@@ -18,17 +8,3 @@
 	url = https://github.com/DeanLuus22021994/starter-workflows.git
 	branch = main
 
-[submodule "github-mcp-server"]
-	path = github-mcp-server
-	url = https://github.com/DeanLuus22021994/github-mcp-server.git
-	branch = main
-
-[submodule "vscode"]
-	path = vscode
-	url = https://github.com/DeanLuus22021994/vscode.git
-	branch = main
-
-[submodule "linuxkit"]
-	path = linuxkit
-	url = https://github.com/DeanLuus22021994/linuxkit.git
-	branch = main

@@ -1,0 +1,73 @@
+# Technical Debt Scanner Configuration
+version: 1.0
+
+# Debt markers to track in code
+markers:
+  - marker: "#debt:"
+    priority: high
+    color: "FF0000"
+    label: "debt:high"
+  - marker: "#improve:"
+    priority: medium
+    color: "FFFF00"
+    label: "debt:improve"
+  - marker: "#refactor:"
+    priority: medium
+    color: "FFAA00"
+    label: "debt:refactor"
+  - marker: "#todo:"
+    priority: low
+    color: "00FF00"
+    label: "todo"
+  - marker: "#fixme:"
+    priority: high
+    color: "FF00FF"
+    label: "fixme"
+
+# File patterns to scan
+include_patterns:
+  - "**/*.js"
+  - "**/*.ts"
+  - "**/*.jsx"
+  - "**/*.tsx"
+  - "**/*.css"
+  - "**/*.scss"
+  - "**/*.html"
+  - "**/*.md"
+
+# Directories/files to ignore
+exclude_patterns:
+  - "node_modules/**"
+  - "dist/**"
+  - "build/**"
+  - ".git/**"
+  - ".github/debt-management/templates/**"
+
+# Documentation settings
+documentation:
+  template_path: ".github/debt-management/templates/DEVELOPMENT_DEBT_TEMPLATE.md"
+  sections:
+    - overview
+    - action_items
+    - priority
+    - estimated_effort
+    - implementation_notes
+    - acceptance_criteria
+    - related_files
+    - dependencies
+    - assigned_to
+
+# Reporting settings
+reporting:
+  generate_summary: true
+  create_issues: true
+  update_existing_issues: true
+  weekly_digest: true
+  assign_to_author: false
+  mention_authors: true
+  include_diff_stats: true
+
+# Issue settings
+issue:
+  label_prefix: "debt:"
+  template: "technical-debt-issue"

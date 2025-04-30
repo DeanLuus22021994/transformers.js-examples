@@ -287,6 +287,21 @@
 				"panel": "new"
 			},
 			"problemMatcher": []
+		},
+		{
+			"label": "Scan Technical Debt",
+			"type": "shell",
+			"command": "docker-compose -f docker-compose.debt-scanner.yml up --build",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
 		}
 	],
 	"inputs": [

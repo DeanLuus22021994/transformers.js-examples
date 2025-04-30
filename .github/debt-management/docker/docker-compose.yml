@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  debt-scanner:
+    build:
+      context: ../..
+      dockerfile: .github/debt-management/docker/Dockerfile
+    volumes:
+      - ../../..:/repo
+    environment:
+      - TERM=xterm-color
+    tty: true

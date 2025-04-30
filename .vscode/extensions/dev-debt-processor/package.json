@@ -1,66 +1,72 @@
 {
-	"name": "dev-debt-processor",
-	"displayName": "Dev Debt Processor",
-	"description": "Automatically processes Dev_Debt.md files using GitHub Copilot",
-	"version": "0.1.0",
-	"engines": {
-		"vscode": "^1.60.0"
-	},
-	"dependencies": {
-		"xml2js": "^0.6.2"
-	},
-	"activationEvents": [
-		"onStartupFinished"
-	],
-	"main": "./extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "dev-debt-processor.processDevDebt",
-				"title": "Process Dev Debt Files"
-			},
-			{
-				"command": "dev-debt-processor.viewLogs",
-				"title": "View Dev Debt Processing Logs"
-			},
-			{
-				"command": "dev-debt-processor.createTemplate",
-				"title": "Create Dev Debt Template"
-			},
-			{
-				"command": "dev-debt-processor.toggleFeature",
-				"title": "Toggle Development Feature"
-			}
-		],
-		"configuration": {
-			"title": "Dev Debt Processor",
-			"properties": {
-				"devDebtProcessor.enabled": {
-					"type": "boolean",
-					"default": true,
-					"description": "Enable automatic processing of Dev_Debt.md files on startup"
-				},
-				"devDebtProcessor.delaySeconds": {
-					"type": "number",
-					"default": 30,
-					"description": "Delay in seconds before processing Dev_Debt.md files"
-				},
-				"devDebtProcessor.strictValidation": {
-					"type": "boolean",
-					"default": true,
-					"description": "Strictly validate that Dev_Debt.md only references files in its directory"
-				},
-				"devDebtProcessor.autoArchive": {
-					"type": "boolean",
-					"default": true,
-					"description": "Automatically archive logs when VS Code is closed"
-				},
-				"devDebtProcessor.logRetentionDays": {
-					"type": "number",
-					"default": 30,
-					"description": "Number of days to keep archived logs before deletion"
-				}
-			}
-		}
-	}
+  "name": "dev-debt-processor",
+  "displayName": "Dev Debt Processor",
+  "description": "Automatically processes Dev_Debt.md files using GitHub Copilot",
+  "version": "0.2.0",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "dependencies": {
+    "glob": "^7.2.0",
+    "xml2js": "^0.6.2",
+    "yaml": "^2.3.4"
+  },
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "jest": "^29.5.0",
+    "sinon": "^15.0.1"
+  },
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "dev-debt-processor.processDevDebt",
+        "title": "Process Dev Debt Files"
+      },
+      {
+        "command": "dev-debt-processor.viewLogs",
+        "title": "View Dev Debt Processing Logs"
+      },
+      {
+        "command": "dev-debt-processor.createTemplate",
+        "title": "Create Dev Debt Template"
+      },
+      {
+        "command": "dev-debt-processor.toggleFeature",
+        "title": "Toggle Development Feature"
+      },
+      {
+        "command": "dev-debt-processor.scanDebtTags",
+        "title": "Scan Code for Technical Debt"
+      }
+    ],
+    "configuration": {
+      "title": "Dev Debt Processor",
+      "properties": {
+        "devDebtProcessor.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable automatic processing of Dev_Debt.md files on startup"
+        },
+        "devDebtProcessor.scanOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Scan for debt tags when saving files"
+        },
+        "devDebtProcessor.autoCreateReports": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically create reports when scanning for debt"
+        }
+      }
+    }
+  }
 }

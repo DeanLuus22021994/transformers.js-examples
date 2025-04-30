@@ -1,0 +1,28 @@
+name: Technical Debt Scanner
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  scan-debt:
+    name: Scan for technical debt markers
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Run debt scanner
+        run: |
+          bash .github/debt-management/scripts/scan-debt.sh
+
+      - name: Upload debt report
+        uses: actions/upload-artifact@v3
+        with:
+          name: technical-debt-report
+          path: debt-report.md

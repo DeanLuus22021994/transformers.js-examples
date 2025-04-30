@@ -11,6 +11,7 @@ const findAndProcessDevDebtFiles = require('./commands/process-dev-debt');
 const viewLogs = require('./commands/view-logs');
 const createTemplate = require('./commands/create-template');
 const toggleFeature = require('./commands/toggle-feature');
+const scanDebtTags = require('./commands/scan-debt-tags');
 const StatusIndicator = require('./utils/status-indicator');
 
 /**
@@ -78,9 +79,7 @@ async function activate(context) {
     let createTemplateCommand = vscode.commands.registerCommand(
         'dev-debt-processor.createTemplate',
         (folderUri) => createTemplate(folderUri, logger, copilotInitialized ? copilotConfigManager : configManager)
-    );
-
-    let toggleFeatureCommand = vscode.commands.registerCommand(
+    );    let toggleFeatureCommand = vscode.commands.registerCommand(
         'dev-debt-processor.toggleFeature',
         async () => {
             // Toggle in both config systems if both are available
@@ -91,6 +90,11 @@ async function activate(context) {
             }
             statusIndicator.update();
         }
+    );
+
+    let scanDebtTagsCommand = vscode.commands.registerCommand(
+        'dev-debt-processor.scanDebtTags',
+        () => scanDebtTags(logger)
     );
 
     // Archive logs when extension is deactivated

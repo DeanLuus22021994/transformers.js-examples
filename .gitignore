@@ -17,3 +17,7 @@ dist
 !.github/**
 !.devcontainer
 !.devcontainer/**
+actions-runner
+
+
+

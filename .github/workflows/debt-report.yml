@@ -1,0 +1,29 @@
+name: Weekly Technical Debt Report
+
+on:
+  schedule:
+    - cron: "0 9 * * 1" # 9 AM every Monday
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  generate-report:
+    name: Generate Technical Debt Report
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Generate debt report
+        run: |
+          bash .github/debt-management/scripts/generate-report.sh
+
+      - name: Create Issue for Report
+        if: success()
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: Weekly Technical Debt Report
+          content-filepath: ./debt-weekly-report.md
+          labels: |
+            report
+            technical-debt
+            documentation
