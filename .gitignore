@@ -4,6 +4,8 @@ node_modules/
 dist/
 .next/
 .vscode/extensions/dev-debt-processor/node_modules/
+.devcontainer/volumes/node_modules
+
 # OS specific files
 .DS_Store
 
