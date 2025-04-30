@@ -1,10 +1,11 @@
 #!/bin/bash
 set -e
 CONFIG_FILE=.github/debt-management/config/debt-config.yml
-REPORT_FILE=.github/reports/dev_debt/.github/reports/dev_debt/debt-report.md
+REPORT_FILE=.github/reports/dev_debt/debt-report.md
 [ -f "$CONFIG_FILE" ] || exit 1
 get_config_value(){ grep "$1:" "$CONFIG_FILE" | head -n 1 | sed 's/.*: "\(.*\)".*/\1/'; }
 get_array_values(){ grep -A 100 "$1:" "$CONFIG_FILE" | grep -B 100 -m 1 "^[a-z]" | grep "$2" | sed 's/.*- "\(.*\)".*/\1/'; }
+mkdir -p $(dirname "$REPORT_FILE")
 echo "# Technical Debt Report" > "$REPORT_FILE"
 echo "Generated on $(date)" >> "$REPORT_FILE"
 echo "" >> "$REPORT_FILE"
@@ -14,38 +15,23 @@ INCLUDE_PATTERNS=($(get_array_values include_patterns -))
 [ ${#INCLUDE_PATTERNS[@]} -eq 0 ] && INCLUDE_PATTERNS=("*.js" "*.ts" "*.jsx" "*.tsx" "*.css" "*.scss" "*.html")
 EXCLUDE_DIRS=$(get_array_values exclude_patterns - | tr '\n' ',' | sed 's/,$//')
 [ -z "$EXCLUDE_DIRS" ] && EXCLUDE_DIRS="node_modules,dist,build,.git"
-
-# Convert exclude dirs to grep exclude pattern
 EXCLUDE_PATTERN=$(echo "$EXCLUDE_DIRS" | sed 's/,/\\|/g')
-
 TOTAL_COUNT=0
 DEBT_ITEMS=()
-
 echo "## Debt Markers Found" >> "$REPORT_FILE"
 echo "" >> "$REPORT_FILE"
-
-# Scan each marker
 for MARKER in "${MARKERS[@]}"; do
     echo "### ${MARKER} Items" >> "$REPORT_FILE"
     echo "" >> "$REPORT_FILE"
-
-    # Include patterns as a string for grep
     PATTERN_STRING=$(printf " --include=\"%s\"" "${INCLUDE_PATTERNS[@]}")
-
-    # Find files with markers, excluding specified directories
     GREP_CMD="grep -r $PATTERN_STRING --exclude-dir={$EXCLUDE_DIRS} \"${MARKER}\" ."
-    echo "Running: $GREP_CMD"
-
     RESULTS=$(eval "$GREP_CMD" || echo "")
-
     if [ -z "$RESULTS" ]; then
         echo "No items found." >> "$REPORT_FILE"
     else
         echo "| File | Line | Description |" >> "$REPORT_FILE"
         echo "|------|------|-------------|" >> "$REPORT_FILE"
-
         while IFS=: read -r file linenum content; do
-            # Extract description after marker
             description=$(echo "$content" | sed -n "s/.*${MARKER}\(.*\)/\1/p" | sed 's/^ *//')
             if [ -z "$description" ]; then
                 description=$(echo "$content" | sed "s/.*${MARKER}.*//" | sed 's/^ *//')
@@ -55,27 +41,18 @@ for MARKER in "${MARKERS[@]}"; do
             DEBT_ITEMS+=("$file:$linenum:$MARKER:$description")
         done <<< "$(echo "$RESULTS" | grep -n "." | sed 's/^\([0-9]*\):\(.*\):\(.*\)/\2:\1:\3/')"
     fi
-
     echo "" >> "$REPORT_FILE"
 done
-
-# Add summary
 echo "## Summary" >> "$REPORT_FILE"
 echo "" >> "$REPORT_FILE"
 echo "Total debt items found: $TOTAL_COUNT" >> "$REPORT_FILE"
-
-# Add statistics by directory
 echo "" >> "$REPORT_FILE"
 echo "## Debt by Directory" >> "$REPORT_FILE"
 echo "" >> "$REPORT_FILE"
-
 if [ $TOTAL_COUNT -gt 0 ]; then
-    # Count by directory
     echo "| Directory | Count | Percentage |" >> "$REPORT_FILE"
     echo "|-----------|-------|------------|" >> "$REPORT_FILE"
-
     declare -A dir_counts
-
     for item in "${DEBT_ITEMS[@]}"; do
         file=$(echo "$item" | cut -d':' -f1)
         dir=$(dirname "$file")
@@ -85,17 +62,13 @@ if [ $TOTAL_COUNT -gt 0 ]; then
             dir_counts["$dir"]=$((dir_counts["$dir"] + 1))
         fi
     done
-
-    # Sort directories by count (highest first)
     for dir in "${!dir_counts[@]}"; do
         count=${dir_counts["$dir"]}
         percentage=$(echo "scale=1; ($count * 100) / $TOTAL_COUNT" | bc)
         echo "| $dir | $count | ${percentage}% |" >> "$REPORT_FILE"
     done | sort -k3 -rn | head -n 10 >> "$REPORT_FILE"
 fi
-
 echo "" >> "$REPORT_FILE"
 echo "Report saved to: $REPORT_FILE"
-echo "Done."
 
 

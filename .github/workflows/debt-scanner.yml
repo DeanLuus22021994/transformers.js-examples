@@ -26,4 +26,3 @@ jobs:
         with:
           name: technical-debt-report
           path: .github/reports/dev_debt/debt-report.md
-

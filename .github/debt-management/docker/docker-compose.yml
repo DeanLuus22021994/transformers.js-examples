@@ -1,16 +1,33 @@
+version: "3.8"
 services:
   debt-scanner:
     build:
       context: ../..
-      dockerfile: .github/debt-management/docker/Dockerfile
+      dockerfile: debt-management/docker/Dockerfile
+      args:
+        BUILDKIT_INLINE_CACHE: 1
     volumes:
       - ../../..:/repo
-      - ../../runner-images:/runner-images-src:ro
+      - runner-images-src:/runner-images-src:ro
       - runner-images-build:/runner-images-build
+      - runner-images-cache:/runner-images-cache
     environment:
-      - TERM=xterm-color
       - RUNNER_IMAGES_TOKEN=${RUNNER_IMAGES_TOKEN}
+      - PYTHONOPTIMIZE=1
+      - PACKER_PLUGIN_PATH=/runner-images-cache/packer-plugins
+      - DOCKER_BUILDKIT=1
+    deploy:
+      resources:
+        limits:
+          cpus: "0"
+          memory: "0"
     tty: true
+    stdin_open: true
+
 volumes:
+  runner-images-src:
+    driver: local
   runner-images-build:
+    driver: local
+  runner-images-cache:
     driver: local
