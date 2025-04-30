@@ -1,52 +1,19 @@
 #!/bin/bash
-# Technical Debt Scanner Script
-
-# Load configuration
-CONFIG_FILE=".github/debt-management/config/debt-config.yml"
-REPORT_FILE=".github/reports/dev_debt/.github/reports/dev_debt/debt-report.md"
-
-if [ ! -f "$CONFIG_FILE" ]; then
-    echo "Error: Config file not found at $CONFIG_FILE"
-    exit 1
-fi
-
-# Parse config values using grep and sed (basic parsing)
-function get_config_value() {
-    grep "$1:" "$CONFIG_FILE" | head -n 1 | sed 's/.*: "\(.*\)".*/\1/'
-}
-
-function get_array_values() {
-    local section=$1
-    local marker=$2
-    grep -A 100 "$section:" "$CONFIG_FILE" | grep -B 100 -m 1 "^[a-z]" | grep "$marker" | sed 's/.*- "\(.*\)".*/\1/'
-}
-
+set -e
+CONFIG_FILE=.github/debt-management/config/debt-config.yml
+REPORT_FILE=.github/reports/dev_debt/.github/reports/dev_debt/debt-report.md
+[ -f "$CONFIG_FILE" ] || exit 1
+get_config_value(){ grep "$1:" "$CONFIG_FILE" | head -n 1 | sed 's/.*: "\(.*\)".*/\1/'; }
+get_array_values(){ grep -A 100 "$1:" "$CONFIG_FILE" | grep -B 100 -m 1 "^[a-z]" | grep "$2" | sed 's/.*- "\(.*\)".*/\1/'; }
 echo "# Technical Debt Report" > "$REPORT_FILE"
 echo "Generated on $(date)" >> "$REPORT_FILE"
 echo "" >> "$REPORT_FILE"
-
-# Get markers from config
 MARKERS=($(grep -A 100 "markers:" "$CONFIG_FILE" | grep "marker:" | sed 's/.*marker: "\(.*\)".*/\1/'))
-if [ ${#MARKERS[@]} -eq 0 ]; then
-    MARKERS=("#debt:" "#improve:" "#refactor:" "#fixme:" "#todo:")
-    echo "Using default markers: ${MARKERS[*]}"
-else
-    echo "Using configured markers: ${MARKERS[*]}"
-fi
-
-# Get file patterns
-INCLUDE_PATTERNS=($(get_array_values "include_patterns" "-"))
-if [ ${#INCLUDE_PATTERNS[@]} -eq 0 ]; then
-    INCLUDE_PATTERNS=("*.js" "*.ts" "*.jsx" "*.tsx" "*.css" "*.scss" "*.html")
-    echo "Using default include patterns: ${INCLUDE_PATTERNS[*]}"
-fi
-
-# Get exclude patterns
-EXCLUDE_DIRS=$(get_array_values "exclude_patterns" "-" | tr '\n' ',' | sed 's/,$//')
-if [ -z "$EXCLUDE_DIRS" ]; then
-    EXCLUDE_DIRS="node_modules,dist,build,.git"
-    echo "Using default exclude directories: $EXCLUDE_DIRS"
-fi
+[ ${#MARKERS[@]} -eq 0 ] && MARKERS=("#debt:" "#improve:" "#refactor:" "#fixme:" "#todo:")
+INCLUDE_PATTERNS=($(get_array_values include_patterns -))
+[ ${#INCLUDE_PATTERNS[@]} -eq 0 ] && INCLUDE_PATTERNS=("*.js" "*.ts" "*.jsx" "*.tsx" "*.css" "*.scss" "*.html")
+EXCLUDE_DIRS=$(get_array_values exclude_patterns - | tr '\n' ',' | sed 's/,$//')
+[ -z "$EXCLUDE_DIRS" ] && EXCLUDE_DIRS="node_modules,dist,build,.git"
 
 # Convert exclude dirs to grep exclude pattern
 EXCLUDE_PATTERN=$(echo "$EXCLUDE_DIRS" | sed 's/,/\\|/g')
@@ -61,22 +28,22 @@ echo "" >> "$REPORT_FILE"
 for MARKER in "${MARKERS[@]}"; do
     echo "### ${MARKER} Items" >> "$REPORT_FILE"
     echo "" >> "$REPORT_FILE"
-    
+
     # Include patterns as a string for grep
     PATTERN_STRING=$(printf " --include=\"%s\"" "${INCLUDE_PATTERNS[@]}")
-    
+
     # Find files with markers, excluding specified directories
     GREP_CMD="grep -r $PATTERN_STRING --exclude-dir={$EXCLUDE_DIRS} \"${MARKER}\" ."
     echo "Running: $GREP_CMD"
-    
+
     RESULTS=$(eval "$GREP_CMD" || echo "")
-    
+
     if [ -z "$RESULTS" ]; then
         echo "No items found." >> "$REPORT_FILE"
     else
         echo "| File | Line | Description |" >> "$REPORT_FILE"
         echo "|------|------|-------------|" >> "$REPORT_FILE"
-        
+
         while IFS=: read -r file linenum content; do
             # Extract description after marker
             description=$(echo "$content" | sed -n "s/.*${MARKER}\(.*\)/\1/p" | sed 's/^ *//')
@@ -88,7 +55,7 @@ for MARKER in "${MARKERS[@]}"; do
             DEBT_ITEMS+=("$file:$linenum:$MARKER:$description")
         done <<< "$(echo "$RESULTS" | grep -n "." | sed 's/^\([0-9]*\):\(.*\):\(.*\)/\2:\1:\3/')"
     fi
-    
+
     echo "" >> "$REPORT_FILE"
 done
 
@@ -106,9 +73,9 @@ if [ $TOTAL_COUNT -gt 0 ]; then
     # Count by directory
     echo "| Directory | Count | Percentage |" >> "$REPORT_FILE"
     echo "|-----------|-------|------------|" >> "$REPORT_FILE"
-    
+
     declare -A dir_counts
-    
+
     for item in "${DEBT_ITEMS[@]}"; do
         file=$(echo "$item" | cut -d':' -f1)
         dir=$(dirname "$file")
@@ -118,7 +85,7 @@ if [ $TOTAL_COUNT -gt 0 ]; then
             dir_counts["$dir"]=$((dir_counts["$dir"] + 1))
         fi
     done
-    
+
     # Sort directories by count (highest first)
     for dir in "${!dir_counts[@]}"; do
         count=${dir_counts["$dir"]}

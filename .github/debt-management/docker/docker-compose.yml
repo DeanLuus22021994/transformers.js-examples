@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   debt-scanner:
     build:
@@ -7,6 +5,12 @@ services:
       dockerfile: .github/debt-management/docker/Dockerfile
     volumes:
       - ../../..:/repo
+      - ../../runner-images:/runner-images-src:ro
+      - runner-images-build:/runner-images-build
     environment:
       - TERM=xterm-color
+      - RUNNER_IMAGES_TOKEN=${RUNNER_IMAGES_TOKEN}
     tty: true
+volumes:
+  runner-images-build:
+    driver: local

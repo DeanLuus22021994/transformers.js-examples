@@ -8,8 +8,3 @@
 	url = https://github.com/DeanLuus22021994/starter-workflows.git
 	branch = main
 
-[submodule "runner-images"]
-	path = runner-images
-	url = https://github.com/DeanLuus22021994/runner-images.git
-	branch = main
-

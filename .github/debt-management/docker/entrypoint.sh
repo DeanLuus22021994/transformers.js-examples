@@ -1,33 +1,9 @@
 #!/bin/bash
-# Docker container entrypoint
-
-echo "╔════════════════════════════════════════╗"
-echo "║       Technical Debt Scanner           ║"
-echo "╚════════════════════════════════════════╝"
-echo ""
-
-# Mount repository directory as volume
-if [ ! -d "/repo" ]; then
-    echo "Error: Repository directory not found at /repo"
-    echo "Please mount your repository volume correctly"
-    echo "Example: docker run -v \$(pwd):/repo debt-scanner"
-    exit 1
-fi
-
-# Create output directory
-mkdir -p /repo/debt-reports
-
-# Run the scanner
-cd /repo
-echo "Running debt scanner..."
-scan-debt
-
-# Generate report
-echo ""
-echo "Generating comprehensive report..."
-generate-report
-
-echo ""
-echo "Done! Reports available in the repository root:"
-echo "- debt-report.md: Raw scan results"
-echo "- debt-weekly-report.md: Weekly summary with trends and recommendations"
+set -e
+[ -n "$RUNNER_IMAGES_TOKEN" ] || { echo env_var_missing; exit 1; }
+[ -d /repo ] || { echo no_repo_mount; exit 1; }
+cd /repo && git submodule update --init --recursive
+mkdir -p /repo/debt-reports /runner-images-build
+[ -d /runner-images-src ] || { echo no_runner_images_src_mount; exit 1; }
+cd /runner-images-src && [ -f images/ubuntu/templates/ubuntu2204.pkr.hcl ] && packer init images/ubuntu/templates/ubuntu2204.pkr.hcl && packer build -force -color=false -on-error=abort -var output_dir=/runner-images-build images/ubuntu/templates/ubuntu2204.pkr.hcl || echo no_packer_template
+cd /repo && scan-debt && generate-report
