@@ -1,0 +1,137 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Extension Development Configuration",
+    "type": "object",
+    "required": ["version", "extensionName", "structure"],
+    "properties": {
+        "version": {
+            "type": "string",
+            "description": "Configuration version"
+        },
+        "extensionName": {
+            "type": "string",
+            "description": "Name of the extension"
+        },
+        "structure": {
+            "type": "object",
+            "description": "Directory structure definition",
+            "properties": {
+                "directories": {
+                    "type": "array",
+                    "description": "Required directories for extension",
+                    "items": {
+                        "type": "object",
+                        "required": ["path", "purpose"],
+                        "properties": {
+                            "path": {
+                                "type": "string",
+                                "description": "Directory path relative to extension root"
+                            },
+                            "purpose": {
+                                "type": "string",
+                                "description": "Purpose of this directory"
+                            },
+                            "required": {
+                                "type": "boolean",
+                                "description": "Whether this directory is required",
+                                "default": true
+                            }
+                        }
+                    }
+                },
+                "files": {
+                    "type": "array",
+                    "description": "Required files for extension",
+                    "items": {
+                        "type": "object",
+                        "required": ["path", "purpose"],
+                        "properties": {
+                            "path": {
+                                "type": "string",
+                                "description": "File path relative to extension root"
+                            },
+                            "purpose": {
+                                "type": "string",
+                                "description": "Purpose of this file"
+                            },
+                            "template": {
+                                "type": "string",
+                                "description": "Path to template file for generation"
+                            },
+                            "required": {
+                                "type": "boolean",
+                                "description": "Whether this file is required",
+                                "default": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "convergence": {
+            "type": "object",
+            "description": "Convergence settings for extension development",
+            "properties": {
+                "targetVersion": {
+                    "type": "string",
+                    "description": "Target version for convergence"
+                },
+                "steps": {
+                    "type": "array",
+                    "description": "Convergence steps",
+                    "items": {
+                        "type": "object",
+                        "required": ["name", "description", "criteria"],
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Step name"
+                            },
+                            "description": {
+                                "type": "string",
+                                "description": "Step description"
+                            },
+                            "criteria": {
+                                "type": "string",
+                                "description": "Success criteria for the step"
+                            },
+                            "dependencies": {
+                                "type": "array",
+                                "description": "Dependencies to other steps",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "measurements": {
+                    "type": "array",
+                    "description": "Metrics to measure convergence progress",
+                    "items": {
+                        "type": "object",
+                        "required": ["name", "description", "measurement"],
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Metric name"
+                            },
+                            "description": {
+                                "type": "string",
+                                "description": "Metric description"
+                            },
+                            "measurement": {
+                                "type": "string",
+                                "description": "How to measure this metric"
+                            },
+                            "target": {
+                                "type": "string",
+                                "description": "Target value for this metric"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

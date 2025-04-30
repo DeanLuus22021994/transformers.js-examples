@@ -1,0 +1,61 @@
+{
+    "version": "1.0.0",
+    "integration": {
+        "enabled": true,
+        "featureFlags": {
+            "debtManagement": true,
+            "testScaffolding": true,
+            "documentationGeneration": true,
+            "codeReview": true
+        }
+    },
+    "debtManagement": {
+        "markerScanning": {
+            "enabled": true,
+            "scanOnSave": true,
+            "scanOnCommit": true
+        },
+        "testIntegration": {
+            "enabled": true,
+            "generateTestsForDebtItems": true,
+            "updateTestsOnDebtResolution": true
+        },
+        "reportGeneration": {
+            "enabled": true,
+            "format": "markdown",
+            "categorizeByPriority": true,
+            "includeMetrics": true
+        }
+    },
+    "extensionDevelopment": {
+        "targetStructure": {
+            "directories": [
+                "prompts",
+                "snippets",
+                "completions",
+                "commands",
+                "schemas"
+            ],
+            "coreFiles": [
+                "config.json",
+                "README.md"
+            ]
+        },
+        "convergenceMetrics": {
+            "checkpoints": [
+                "structure-alignment",
+                "schema-validation",
+                "test-coverage",
+                "documentation-completeness",
+                "debt-reduction"
+            ],
+            "measurementFrequency": "weekly"
+        }
+    },
+    "pathAlignments": {
+        "debtTemplatePath": ".github/templates/dev_debt_template.md",
+        "debtReportPath": ".github/reports/dev_debt/debt-report.md",
+        "weeklyReportPath": ".github/reports/dev_debt/debt-weekly-report.md",
+        "configPath": ".github/debt-management/config/debt-config.yml"
+    }
+}

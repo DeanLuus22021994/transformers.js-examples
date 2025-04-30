@@ -3,7 +3,7 @@
 
 REPO_PATH=$(pwd)
 CONFIG_FILE=".github/debt-management/config/debt-config.yml"
-REPORT_FILE=".github/reports/dev_debt/debt-weekly-report.md"
+REPORT_FILE=".github/reports/dev_debt/.github/reports/dev_debt/debt-weekly-report.md"
 DATES_RANGE="$(date -d '30 days ago' +%Y-%m-%d) to $(date +%Y-%m-%d)"
 
 # Run scanner first to get raw data
@@ -15,7 +15,7 @@ echo "Date Range: $DATES_RANGE" >> "$REPORT_FILE"
 echo "" >> "$REPORT_FILE"
 
 # Get basic stats
-TOTAL_DEBT=$(grep "Total debt items found:" .github/reports/dev_debt/debt-report.md | sed 's/Total debt items found: \(.*\)/\1/')
+TOTAL_DEBT=$(grep "Total debt items found:" .github/reports/dev_debt/.github/reports/dev_debt/debt-report.md | sed 's/Total debt items found: \(.*\)/\1/')
 echo "## Summary" >> "$REPORT_FILE"
 echo "" >> "$REPORT_FILE"
 echo "- **Total Debt Items:** $TOTAL_DEBT" >> "$REPORT_FILE"
@@ -25,10 +25,10 @@ echo "" >> "$REPORT_FILE"
 echo "## Debt by Type" >> "$REPORT_FILE"
 echo "" >> "$REPORT_FILE"
 
-sed -n '/^## Debt Markers Found/,/^## Summary/p' .github/reports/dev_debt/debt-report.md | grep '###' | \
+sed -n '/^## Debt Markers Found/,/^## Summary/p' .github/reports/dev_debt/.github/reports/dev_debt/debt-report.md | grep '###' | \
 while read -r line; do
     type=$(echo "$line" | sed 's/### \(.*\) Items/\1/')
-    count=$(sed -n "/### $type Items/,/###/p" .github/reports/dev_debt/debt-report.md | grep -c "| " | expr - 2)
+    count=$(sed -n "/### $type Items/,/###/p" .github/reports/dev_debt/.github/reports/dev_debt/debt-report.md | grep -c "| " | expr - 2)
     if [ "$count" -lt 0 ]; then count=0; fi
     if [[ "$type" != "Summary" ]]; then
         echo "- **$type:** $count items" >> "$REPORT_FILE"
@@ -39,7 +39,7 @@ done
 echo "" >> "$REPORT_FILE"
 echo "## Debt by Directory" >> "$REPORT_FILE"
 echo "" >> "$REPORT_FILE"
-sed -n '/^## Debt by Directory/,/^$/p' .github/reports/dev_debt/debt-report.md | sed '1,3d' >> "$REPORT_FILE"
+sed -n '/^## Debt by Directory/,/^$/p' .github/reports/dev_debt/.github/reports/dev_debt/debt-report.md | sed '1,3d' >> "$REPORT_FILE"
 
 # Calculate trend data
 # This is a placeholder - in a real implementation, you'd compare with historical data
@@ -73,4 +73,5 @@ echo "2. **Focus Areas:** Target directories with highest debt concentration" >>
 echo "3. **Documentation:** Ensure all debt items have corresponding documentation" >> "$REPORT_FILE"
 
 echo "Report generated: $REPORT_FILE"
+
 

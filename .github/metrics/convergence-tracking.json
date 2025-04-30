@@ -1,0 +1,68 @@
+{
+    "version": "1.0.0",
+    "lastUpdated": null,
+    "convergenceSteps": {
+        "structure-alignment": {
+            "status": "pending",
+            "progress": 0,
+            "startDate": null,
+            "completionDate": null,
+            "notes": []
+        },
+        "schema-validation": {
+            "status": "pending",
+            "progress": 0,
+            "startDate": null,
+            "completionDate": null,
+            "notes": []
+        },
+        "test-coverage": {
+            "status": "pending",
+            "progress": 0,
+            "startDate": null,
+            "completionDate": null,
+            "notes": []
+        },
+        "documentation-completeness": {
+            "status": "pending",
+            "progress": 0,
+            "startDate": null,
+            "completionDate": null,
+            "notes": []
+        },
+        "debt-reduction": {
+            "status": "pending",
+            "progress": 0,
+            "startDate": null,
+            "completionDate": null,
+            "notes": []
+        }
+    },
+    "metrics": {
+        "structure-completion": {
+            "current": 0,
+            "target": 100,
+            "unit": "%",
+            "history": []
+        },
+        "test-coverage": {
+            "current": 0,
+            "target": 80,
+            "unit": "%",
+            "history": []
+        },
+        "documentation-coverage": {
+            "current": 0,
+            "target": 100,
+            "unit": "%",
+            "history": []
+        },
+        "high-priority-debt": {
+            "current": 0,
+            "target": 0,
+            "unit": "count",
+            "history": []
+        }
+    },
+    "iterations": []
+}

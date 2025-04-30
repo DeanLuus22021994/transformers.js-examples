@@ -1,0 +1,135 @@
+{
+    "version": "1.0.0",
+    "extensionName": "transformers-js-copilot",
+    "structure": {
+        "directories": [
+            {
+                "path": "prompts",
+                "purpose": "Reusable prompt templates",
+                "required": true
+            },
+            {
+                "path": "snippets",
+                "purpose": "Code snippets for Copilot",
+                "required": true
+            },
+            {
+                "path": "completions",
+                "purpose": "Custom completion providers",
+                "required": true
+            },
+            {
+                "path": "commands",
+                "purpose": "Custom commands",
+                "required": true
+            },
+            {
+                "path": "schemas",
+                "purpose": "JSON schemas for validation",
+                "required": true
+            },
+            {
+                "path": "utils",
+                "purpose": "Utility functions",
+                "required": true
+            },
+            {
+                "path": "tests",
+                "purpose": "Unit and integration tests",
+                "required": true
+            },
+            {
+                "path": "docs",
+                "purpose": "Extension documentation",
+                "required": true
+            }
+        ],
+        "files": [
+            {
+                "path": "config.json",
+                "purpose": "Main configuration file",
+                "required": true
+            },
+            {
+                "path": "README.md",
+                "purpose": "Extension documentation",
+                "required": true
+            },
+            {
+                "path": "CHANGELOG.md",
+                "purpose": "Version history",
+                "required": true
+            },
+            {
+                "path": "package.json",
+                "purpose": "Extension metadata and dependencies",
+                "required": true
+            },
+            {
+                "path": "tsconfig.json",
+                "purpose": "TypeScript configuration",
+                "required": true
+            }
+        ]
+    },
+    "convergence": {
+        "targetVersion": "1.0.0",
+        "steps": [
+            {
+                "name": "structure-alignment",
+                "description": "Align directory and file structure",
+                "criteria": "All required directories and files exist"
+            },
+            {
+                "name": "schema-validation",
+                "description": "Validate configuration against schemas",
+                "criteria": "All configuration files pass schema validation",
+                "dependencies": ["structure-alignment"]
+            },
+            {
+                "name": "test-coverage",
+                "description": "Implement comprehensive test coverage",
+                "criteria": "80% or higher test coverage",
+                "dependencies": ["structure-alignment"]
+            },
+            {
+                "name": "documentation-completeness",
+                "description": "Complete all documentation",
+                "criteria": "All features are documented",
+                "dependencies": ["structure-alignment"]
+            },
+            {
+                "name": "debt-reduction",
+                "description": "Reduce technical debt",
+                "criteria": "Zero high-priority debt items",
+                "dependencies": ["structure-alignment", "test-coverage"]
+            }
+        ],
+        "measurements": [
+            {
+                "name": "structure-completion",
+                "description": "Directory and file structure completion percentage",
+                "measurement": "Percentage of required directories and files that exist",
+                "target": "100%"
+            },
+            {
+                "name": "test-coverage",
+                "description": "Code test coverage percentage",
+                "measurement": "Percentage of code covered by tests",
+                "target": "80%"
+            },
+            {
+                "name": "documentation-coverage",
+                "description": "Feature documentation coverage",
+                "measurement": "Percentage of features that are documented",
+                "target": "100%"
+            },
+            {
+                "name": "high-priority-debt",
+                "description": "Number of high-priority debt items",
+                "measurement": "Count of high-priority debt items",
+                "target": "0"
+            }
+        ]
+    }
+}

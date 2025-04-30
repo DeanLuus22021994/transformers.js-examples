@@ -1,0 +1,110 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Debt Management Configuration",
+    "type": "object",
+    "required": ["version", "markers", "include_patterns"],
+    "properties": {
+        "version": {
+            "type": "string",
+            "description": "Configuration version"
+        },
+        "markers": {
+            "type": "array",
+            "description": "Debt markers to track in code",
+            "items": {
+                "type": "object",
+                "required": ["marker", "priority", "label"],
+                "properties": {
+                    "marker": {
+                        "type": "string",
+                        "description": "Text marker to identify in code"
+                    },
+                    "priority": {
+                        "type": "string",
+                        "enum": ["high", "medium", "low"],
+                        "description": "Priority level of the debt item"
+                    },
+                    "color": {
+                        "type": "string",
+                        "description": "Color code for visual representation"
+                    },
+                    "label": {
+                        "type": "string",
+                        "description": "Label for issue tracking"
+                    }
+                }
+            }
+        },
+        "include_patterns": {
+            "type": "array",
+            "description": "File patterns to include in debt scanning",
+            "items": {
+                "type": "string"
+            }
+        },
+        "exclude_patterns": {
+            "type": "array",
+            "description": "Directories/files to ignore",
+            "items": {
+                "type": "string"
+            }
+        },
+        "documentation": {
+            "type": "object",
+            "description": "Documentation settings",
+            "required": ["template_path", "sections"],
+            "properties": {
+                "template_path": {
+                    "type": "string",
+                    "description": "Path to template document"
+                },
+                "sections": {
+                    "type": "array",
+                    "description": "Required document sections",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "reporting": {
+            "type": "object",
+            "description": "Reporting settings",
+            "properties": {
+                "generate_summary": {
+                    "type": "boolean"
+                },
+                "create_issues": {
+                    "type": "boolean"
+                },
+                "update_existing_issues": {
+                    "type": "boolean"
+                },
+                "weekly_digest": {
+                    "type": "boolean"
+                },
+                "assign_to_author": {
+                    "type": "boolean"
+                },
+                "mention_authors": {
+                    "type": "boolean"
+                },
+                "include_diff_stats": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "issue": {
+            "type": "object",
+            "description": "Issue settings",
+            "properties": {
+                "label_prefix": {
+                    "type": "string"
+                },
+                "template": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
