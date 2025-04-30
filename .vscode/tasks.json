@@ -289,9 +289,9 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Scan Technical Debt",
+			"label": "Process Dev Debt Files",
 			"type": "shell",
-			"command": "docker-compose -f docker-compose.debt-scanner.yml up --build",
+			"command": "${command:dev-debt-processor.processDevDebt}",
 			"group": {
 				"kind": "build",
 				"isDefault": true
