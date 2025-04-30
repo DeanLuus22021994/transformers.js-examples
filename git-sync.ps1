@@ -1,3 +1,6 @@
+# --- Automation Flag ---
+$autoConfirm = $true # Set to $false to require manual confirmation
+
 <#
 .SYNOPSIS
     Commits and synchronizes changes to DeanLuus22021994/transformers.js-examples repository
@@ -47,19 +50,8 @@ Write-ColorText -Text "Git configured for user: $GIT_USERNAME <$GIT_EMAIL>" -Col
 # Check current branch
 $currentBranch = git branch --show-current
 if ($currentBranch -ne $EXPECTED_BRANCH) {
-	Write-ColorText -Text "WARNING: Current branch ($currentBranch) is not the expected branch ($EXPECTED_BRANCH)" -Color $Yellow
-	$switchBranch = Read-Host "Would you like to switch to $EXPECTED_BRANCH? (y/n)"
-	if ($switchBranch -eq "y") {
-		# Check if branch exists locally
-		$localBranches = git branch
-		if ($localBranches -match $EXPECTED_BRANCH) {
-			git checkout $EXPECTED_BRANCH
-		}
-		else {
-			git checkout -b $EXPECTED_BRANCH
-		}
-		$currentBranch = $EXPECTED_BRANCH
-	}
+	git checkout $EXPECTED_BRANCH 2>$null || git checkout -b $EXPECTED_BRANCH
+	$currentBranch = $EXPECTED_BRANCH
 }
 
 # Verify or configure remote
@@ -69,19 +61,12 @@ $remotes = git remote
 if ($remotes -contains "origin") {
 	$remoteExists = $true
 	$remoteUrl = git remote get-url origin
-
-	# Check if remote URL matches expected
 	if ($remoteUrl -ne $EXPECTED_ORIGIN) {
 		Write-ColorText -Text "WARNING: Remote URL is different than expected!" -Color $Red
 		Write-ColorText -Text "Current:  $remoteUrl" -Color $Yellow
 		Write-ColorText -Text "Expected: $EXPECTED_ORIGIN" -Color $Yellow
-		$updateRemote = Read-Host "Update remote URL to match expected? (y/n)"
-
-		if ($updateRemote -eq "y") {
-			git remote set-url origin $EXPECTED_ORIGIN
-			$remoteUrl = $EXPECTED_ORIGIN
-			Write-ColorText -Text "Remote URL updated." -Color $Green
-		}
+		git remote set-url origin $EXPECTED_ORIGIN
+		Write-ColorText -Text "Remote URL forcibly updated to $EXPECTED_ORIGIN." -Color $Green
 	}
 }
 else {
@@ -93,13 +78,8 @@ else {
 }
 
 # Verify PAT is available
-$patAvailable = $false
-if ($env:PERSONAL_ACCESS_TOKEN) {
-	$patAvailable = $true
-	# Create a credential URL with the PAT for pushing
-	$repoUrlWithPat = $EXPECTED_ORIGIN -replace "https://", "https://${GIT_USERNAME}:${env:PERSONAL_ACCESS_TOKEN}@"
-}
-else {
+$patAvailable = [bool]$env:PERSONAL_ACCESS_TOKEN
+if (-not $patAvailable) {
 	Write-ColorText -Text "WARNING: Personal Access Token not found in environment variables." -Color $Red
 	Write-ColorText -Text "Push operations may fail or prompt for credentials." -Color $Yellow
 }
@@ -107,9 +87,7 @@ else {
 # Optimize local git repository
 Write-ColorText -Text "Optimizing local git repository..." -Color $Blue
 try {
-	# Run garbage collection
 	git gc
-	# Repack the repository
 	git repack -d
 }
 catch {
@@ -136,10 +114,15 @@ Write-Host "- Total changes: $totalChanges"
 Write-Host "- PAT available: $patAvailable"
 
 # Confirmation prompt
-Write-ColorText -Text "`nReady to commit and push changes." -Color $Yellow
-Write-Host "Press Enter to continue, Ctrl+C to cancel..." -NoNewline
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-Write-Host "`n"
+if (-not $autoConfirm) {
+	Write-ColorText -Text "`nReady to commit and push changes." -Color $Yellow
+	Write-Host "Press Enter to continue, Ctrl+C to cancel..." -NoNewline
+	$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+	Write-Host "`n"
+}
+else {
+	Write-ColorText -Text "Auto-confirm enabled: proceeding without manual intervention." -Color $Green
+}
 
 # Stage all changes
 Write-ColorText -Text "Staging all changes..." -Color $Blue
@@ -169,8 +152,7 @@ if ($remoteExists) {
 		Remove-Item Env:GIT_ASKPASS -ErrorAction SilentlyContinue
 		Remove-Item Env:GIT_TERMINAL_PROMPT -ErrorAction SilentlyContinue
 	}
- else {
-		# Standard push (may prompt for credentials)
+	else {
 		git push origin $currentBranch
 		$exitCode = $LASTEXITCODE
 	}
@@ -178,7 +160,7 @@ if ($remoteExists) {
 	if ($exitCode -eq 0) {
 		Write-ColorText -Text "Changes pushed successfully to $EXPECTED_ORIGIN." -Color $Green
 	}
- else {
+	else {
 		Write-ColorText -Text "Failed to push changes." -Color $Red
 		exit 1
 	}
