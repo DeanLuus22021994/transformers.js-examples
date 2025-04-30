@@ -1,0 +1,29 @@
+FROM node:18-alpine
+
+# Install Docker client for managing Docker from within the container
+RUN apk add --no-cache docker-cli docker-compose
+
+# Install additional dependencies
+RUN apk add --no-cache curl jq bash git
+
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm ci --production
+
+# Copy source code
+COPY . .
+
+# Build TypeScript
+RUN npm run build
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV LOG_LEVEL=info
+
+# Set entrypoint
+ENTRYPOINT ["node", "dist/index.js"]
+
+# Default command
+CMD ["serve"]

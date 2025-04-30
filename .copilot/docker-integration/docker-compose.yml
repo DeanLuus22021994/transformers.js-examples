@@ -1,0 +1,73 @@
+version: '3.8'
+
+# Main service for transformers.js Docker integration
+services:
+  # Core service that provides Docker integration functionality
+  transformers-docker-core:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.core
+    image: transformersjs-docker-integration:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - .:/app
+      - ${HOME}/.transformersjs-cache:/cache
+    environment:
+      - NODE_ENV=production
+      - CACHE_DIR=/cache
+      - LOG_LEVEL=info
+    restart: unless-stopped
+    networks:
+      - transformers-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # Service for model caching and optimization
+  transformers-cache-manager:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.cache
+    image: transformersjs-cache-manager:latest
+    volumes:
+      - ${HOME}/.transformersjs-cache:/cache
+      - .:/app
+    environment:
+      - CACHE_SIZE=10GB
+      - CACHE_TTL=30d
+      - PRUNE_INTERVAL=24h
+    depends_on:
+      - transformers-docker-core
+    networks:
+      - transformers-net
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  # Service for handling Copilot integration
+  transformers-copilot-integration:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.copilot
+    image: transformersjs-copilot-integration:latest
+    volumes:
+      - .:/app
+      - ${HOME}/.transformersjs-cache:/cache
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - transformers-docker-core
+    networks:
+      - transformers-net
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+# Define network for all services
+networks:
+  transformers-net:
+    driver: overlay
+    attachable: true

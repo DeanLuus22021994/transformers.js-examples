@@ -1,0 +1,34 @@
+FROM node:18-alpine
+
+# Install dependencies
+RUN apk add --no-cache curl jq bash git
+
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm ci --production
+
+# Copy source code
+COPY . .
+
+# Build TypeScript
+RUN npm run build
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV LOG_LEVEL=info
+ENV CACHE_DIR=/cache
+ENV CACHE_SIZE=10GB
+ENV CACHE_TTL=30d
+ENV PRUNE_INTERVAL=24h
+
+# Create cache directory
+RUN mkdir -p /cache
+
+# Set entrypoint
+ENTRYPOINT ["node", "dist/caching/cache-service.js"]
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+	CMD node ./dist/health-check.js cache || exit 1
