@@ -46,7 +46,7 @@ export async function stopMCPServer(): Promise<boolean> {
 /**
  * Check MCP server status
  */
-export async function checkMCPServerStatus(): Promise<{
+export async function checkMCPServerStatus(serverHost: string = 'localhost', serverPort: number = 8083): Promise<{
 	running: boolean;
 	port?: number;
 	uptime?: number;
@@ -54,18 +54,122 @@ export async function checkMCPServerStatus(): Promise<{
 }> {
 	const logger = Logger.getInstance();
 	try {
-		// This is a placeholder for actual status checking
-		// In a real implementation, we would connect to the server and get its status
-		return {
-			running: false,
-			port: undefined,
-			uptime: undefined,
-			models: undefined
-		};
+		// Send a request to the health endpoint to check if server is running
+		const http = await import('http');
+
+		return new Promise((resolve) => {
+			const req = http.request({
+				hostname: serverHost,
+				port: serverPort,
+				path: '/health',
+				method: 'GET',
+				timeout: 5000
+			}, (res) => {
+				let data = '';
+
+				res.on('data', (chunk) => {
+					data += chunk;
+				});
+
+				res.on('end', () => {
+					if (res.statusCode === 200) {
+						try {
+							const response = JSON.parse(data);
+							logger.info('mcp-cli', `MCP server is running on port ${serverPort}`);
+
+							// Get the number of models
+							getModelCount(serverHost, serverPort).then(modelCount => {
+								resolve({
+									running: true,
+									port: serverPort,
+									uptime: Date.now() - new Date(response.timestamp).getTime(),
+									models: modelCount
+								});
+							}).catch(() => {
+								resolve({
+									running: true,
+									port: serverPort,
+									uptime: Date.now() - new Date(response.timestamp).getTime()
+								});
+							});
+						} catch (error) {
+							logger.error('mcp-cli', `Error parsing response: ${(error as Error).message}`);
+							resolve({
+								running: true,
+								port: serverPort
+							});
+						}
+					} else {
+						logger.error('mcp-cli', `MCP server returned status code ${res.statusCode}`);
+						resolve({ running: false });
+					}
+				});
+			});
+
+			req.on('error', () => {
+				logger.error('mcp-cli', 'MCP server is not running or not reachable');
+				resolve({ running: false });
+			});
+
+			req.on('timeout', () => {
+				req.destroy();
+				logger.error('mcp-cli', 'Request to MCP server timed out');
+				resolve({ running: false });
+			});
+
+			req.end();
+		});
 	} catch (error) {
 		logger.error('mcp-cli', `Failed to check MCP server status: ${(error as Error).message}`);
 		return { running: false };
 	}
+}
+
+/**
+ * Helper function to get model count
+ */
+async function getModelCount(serverHost: string, serverPort: number): Promise<number> {
+	const http = await import('http');
+
+	return new Promise((resolve, reject) => {
+		const req = http.request({
+			hostname: serverHost,
+			port: serverPort,
+			path: '/v1/models',
+			method: 'GET',
+			timeout: 5000
+		}, (res) => {
+			let data = '';
+
+			res.on('data', (chunk) => {
+				data += chunk;
+			});
+
+			res.on('end', () => {
+				if (res.statusCode === 200) {
+					try {
+						const response = JSON.parse(data);
+						resolve(response.data ? response.data.length : 0);
+					} catch (error) {
+						reject(error);
+					}
+				} else {
+					reject(new Error(`Failed to get models: ${res.statusCode}`));
+				}
+			});
+		});
+
+		req.on('error', (error) => {
+			reject(error);
+		});
+
+		req.on('timeout', () => {
+			req.destroy();
+			reject(new Error('Request timed out'));
+		});
+
+		req.end();
+	});
 }
 
 /**
