@@ -1,0 +1,40 @@
+# Use a specific Node.js version for better performance and compatibility
+FROM node:18-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install additional dependencies
+RUN apt-get update && apt-get install -y \
+	git \
+	curl \
+	python3 \
+	python3-pip \
+	build-essential \
+	ca-certificates \
+	openssh-client \
+	--no-install-recommends && \
+	rm -rf /var/lib/apt/lists/*
+
+# Create cache directory
+RUN mkdir -p /cache && chmod 777 /cache
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies efficiently
+RUN npm ci --only=production
+
+# Copy application code
+COPY . .
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV HF_CACHE_DIR=/cache
+ENV HF_USE_CACHE=true
+
+# Expose port
+EXPOSE 3000
+
+# Set default command
+CMD ["npm", "start"]

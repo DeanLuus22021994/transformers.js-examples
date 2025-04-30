@@ -1,0 +1,44 @@
+version: '3.8'
+
+# This Docker Compose file is optimized for running transformers.js examples
+# It provides GPU acceleration when available and optimized caching
+
+services:
+  # Main service for running transformers.js examples
+  transformersjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=development
+    image: transformersjs-example:latest
+    volumes:
+      - .:/app
+      - ${HOME}/.transformersjs-cache:/cache
+      - node_modules:/app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - HF_CACHE_DIR=/cache
+      - HF_USE_CACHE=true
+      - LOG_LEVEL=info
+    # Override command in specific example's docker-compose.yml
+    command: npm start
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              count: all
+              device_ids: ['0']
+              options:
+                mode: fast
+              # This device reservation will be ignored on systems without NVIDIA GPU
+
+# Define volumes for optimized performance
+volumes:
+  # Named volume for node_modules to avoid slow I/O on Windows/Mac
+  node_modules:
