@@ -28,15 +28,74 @@ export async function startMCPServer(port?: number): Promise<boolean> {
 /**
  * Stop the MCP server
  */
-export async function stopMCPServer(): Promise<boolean> {
+export async function stopMCPServer(serverHost: string = 'localhost', serverPort: number = 8083): Promise<boolean> {
 	const logger = Logger.getInstance();
 	try {
 		logger.info('mcp-cli', 'Stopping MCP server');
 
-		// In a real implementation, we would need a way to access the running server instance
-		// This is a placeholder for the actual implementation
-		logger.info('mcp-cli', 'MCP server stopped');
-		return true;
+		// Check if the server is running
+		const status = await checkMCPServerStatus(serverHost, serverPort);
+		if (!status.running) {
+			logger.info('mcp-cli', 'MCP server is not running');
+			return true;
+		}
+
+		// For Docker Swarm deployments, we can stop the service
+		try {
+			const { DockerClient } = await import('../core/docker-client');
+			const dockerClient = new DockerClient(logger);
+
+			// Find the MCP service
+			const services = await dockerClient.listServices();
+			const mcpService = services.find(service =>
+				service.name === 'transformers-mcp-server' ||
+				service.name.includes('mcp-server')
+			);
+
+			if (mcpService) {
+				logger.info('mcp-cli', `Stopping MCP service: ${mcpService.name}`);
+				await dockerClient.removeService(mcpService.name);
+				logger.info('mcp-cli', 'MCP service stopped via Docker Swarm');
+				return true;
+			}
+		} catch (dockerError) {
+			logger.warn('mcp-cli', `Could not stop via Docker: ${(dockerError as Error).message}`);
+			// Continue with HTTP shutdown if Docker approach fails
+		}
+
+		// Attempt to send a graceful shutdown signal via HTTP
+		const http = await import('http');
+
+		return new Promise((resolve) => {
+			const req = http.request({
+				hostname: serverHost,
+				port: serverPort,
+				path: '/shutdown',
+				method: 'POST',
+				timeout: 5000
+			}, (res) => {
+				if (res.statusCode === 200) {
+					logger.info('mcp-cli', 'MCP server shutdown initiated');
+					resolve(true);
+				} else {
+					logger.warn('mcp-cli', `MCP server returned status code ${res.statusCode} for shutdown`);
+					resolve(false);
+				}
+			});
+
+			req.on('error', () => {
+				logger.error('mcp-cli', 'Could not send shutdown signal to MCP server');
+				resolve(false);
+			});
+
+			req.on('timeout', () => {
+				req.destroy();
+				logger.error('mcp-cli', 'Shutdown request timed out');
+				resolve(false);
+			});
+
+			req.end();
+		});
 	} catch (error) {
 		logger.error('mcp-cli', `Failed to stop MCP server: ${(error as Error).message}`);
 		return false;
@@ -175,16 +234,62 @@ async function getModelCount(serverHost: string, serverPort: number): Promise<nu
 /**
  * List available models
  */
-export async function listModels(): Promise<string[]> {
+export async function listModels(serverHost: string = 'localhost', serverPort: number = 8083): Promise<string[]> {
 	const logger = Logger.getInstance();
 	try {
-		// This is a placeholder for actual model listing
-		// In a real implementation, we would connect to the server and get the list of models
-		return [
-			'transformers.js/gemma-2-2b',
-			'transformers.js/phi-3.5',
-			'transformers.js/llama-3.2-8b'
-		];
+		// Send a request to the models endpoint
+		const http = await import('http');
+
+		return new Promise((resolve, reject) => {
+			const req = http.request({
+				hostname: serverHost,
+				port: serverPort,
+				path: '/v1/models',
+				method: 'GET',
+				timeout: 5000
+			}, (res) => {
+				let data = '';
+
+				res.on('data', (chunk) => {
+					data += chunk;
+				});
+
+				res.on('end', () => {
+					if (res.statusCode === 200) {
+						try {
+							const response = JSON.parse(data);
+							if (response.data && Array.isArray(response.data)) {
+								const modelIds = response.data.map((model: any) => model.id);
+								logger.info('mcp-cli', `Found ${modelIds.length} models`);
+								resolve(modelIds);
+							} else {
+								logger.warn('mcp-cli', 'No models found');
+								resolve([]);
+							}
+						} catch (error) {
+							logger.error('mcp-cli', `Error parsing model list: ${(error as Error).message}`);
+							resolve([]);
+						}
+					} else {
+						logger.error('mcp-cli', `Failed to list models: status code ${res.statusCode}`);
+						resolve([]);
+					}
+				});
+			});
+
+			req.on('error', (error) => {
+				logger.error('mcp-cli', `Error listing models: ${error.message}`);
+				resolve([]);
+			});
+
+			req.on('timeout', () => {
+				req.destroy();
+				logger.error('mcp-cli', 'Request to list models timed out');
+				resolve([]);
+			});
+
+			req.end();
+		});
 	} catch (error) {
 		logger.error('mcp-cli', `Failed to list models: ${(error as Error).message}`);
 		return [];

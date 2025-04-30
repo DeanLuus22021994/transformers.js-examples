@@ -162,9 +162,14 @@ export class MCPServer {
 			await this.handleListServices(req, res);
 			return;
 		}
-
 		if (url === '/v1/services' && method === 'POST') {
 			await this.handleCreateService(req, res);
+			return;
+		}
+
+		// Shutdown endpoint
+		if (url === '/shutdown' && method === 'POST') {
+			await this.handleShutdown(req, res);
 			return;
 		}
 
@@ -508,7 +513,6 @@ export class MCPServer {
 			res.end(JSON.stringify({ error: 'Internal Server Error' }));
 		}
 	}
-
 	/**
 	 * Handle create service endpoint
 	 */
@@ -535,6 +539,47 @@ export class MCPServer {
 			});
 		} catch (error) {
 			this.logger.error('mcp-server', `Error creating service: ${(error as Error).message}`);
+			res.writeHead(500, { 'Content-Type': 'application/json' });
+			res.end(JSON.stringify({ error: 'Internal Server Error' }));
+		}
+	}
+
+	/**
+	 * Handle shutdown endpoint
+	 */
+	private async handleShutdown(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+		try {
+			this.logger.info('mcp-server', 'Received shutdown request');
+
+			// Send successful response before shutting down
+			res.writeHead(200, { 'Content-Type': 'application/json' });
+			res.end(JSON.stringify({
+				success: true,
+				message: 'Shutdown initiated',
+				timestamp: new Date().toISOString()
+			}));
+
+			// Stop the server after a short delay to allow response to be sent
+			setTimeout(async () => {
+				try {
+					this.logger.info('mcp-server', 'Shutting down server');
+					await this.stop();
+					this.logger.info('mcp-server', 'Server shutdown complete');
+
+					// Exit process if running as standalone
+					if (process.env.MCP_STANDALONE === 'true') {
+						process.exit(0);
+					}
+				} catch (stopError) {
+					this.logger.error('mcp-server', `Error during shutdown: ${(stopError as Error).message}`);
+					// Force exit if stop failed
+					if (process.env.MCP_STANDALONE === 'true') {
+						process.exit(1);
+					}
+				}
+			}, 100);
+		} catch (error) {
+			this.logger.error('mcp-server', `Error handling shutdown: ${(error as Error).message}`);
 			res.writeHead(500, { 'Content-Type': 'application/json' });
 			res.end(JSON.stringify({ error: 'Internal Server Error' }));
 		}
