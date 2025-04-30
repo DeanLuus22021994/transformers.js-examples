@@ -3,6 +3,8 @@ applyTo: '**'
 ---
 # Development Debt Document
 
+NB!!!! Amend the applicable files in the codebase accordingly ensuring no manual full automation
+
 ## Overview
 
 [Brief description of the technical debt this document addresses]

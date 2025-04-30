@@ -1,8 +1,9 @@
 # Node modules and build artifacts
-node_modules
-dist
-.next
-
+node_modules/
+**/node_modules/
+dist/
+.next/
+.vscode/extensions/dev-debt-processor/node_modules/
 # OS specific files
 .DS_Store
 

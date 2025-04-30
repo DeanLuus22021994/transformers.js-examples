@@ -25,8 +25,8 @@ RUN --mount=type=cache,target=/var/cache/apt \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Create non-root user
-RUN groupadd -r node && \
-	useradd -m -r -g node -G sudo node
+RUN groupadd -f -r node && \
+	id -u node 2>/dev/null || useradd -m -r -g node -G sudo node
 
 FROM base as deps
 
