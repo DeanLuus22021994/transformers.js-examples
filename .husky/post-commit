@@ -1,0 +1,18 @@
+# Access the PAT from environment variable
+PAT=$PERSONAL_ACCESS_TOKEN
+
+# Only proceed if PAT is available
+if [ -n "$PAT" ]; then
+  echo "Automatically syncing changes with remote..."
+  # Use the current branch name dynamically
+  BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  
+  # Push to the remote using the PAT
+  # Using https protocol with PAT embedded
+  REMOTE_URL=$(git remote get-url origin | sed 's/https:\/\///')
+  git push https://$PAT@$REMOTE_URL $BRANCH
+  
+  echo "Sync completed successfully!"
+else
+  echo "WARNING: PERSONAL_ACCESS_TOKEN not found - skipping automatic sync"
+fi
