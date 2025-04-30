@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Access the PAT from environment variable
+PAT=$PERSONAL_ACCESS_TOKEN
+
+# Use the PAT in your Git operations
+if [ -n "$PAT" ]; then
+  echo "Using PAT for authenticated operations"
+  # Your commands using $PAT
+else
+  echo "WARNING: PERSONAL_ACCESS_TOKEN not found in environment variables"
+  exit 1
+fi
