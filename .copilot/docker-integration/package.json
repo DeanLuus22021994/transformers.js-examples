@@ -1,0 +1,54 @@
+{
+	"name": "transformers-docker-integration",
+	"version": "1.0.0",
+	"description": "Advanced Docker integration system for transformers.js with Docker Swarm support",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"bin": {
+		"docker-trace": "./dist/cli.js"
+	},
+	"scripts": {
+		"build": "tsc",
+		"watch": "tsc -w",
+		"start": "node dist/index.js",
+		"docker:init": "node dist/cli.js init",
+		"docker:swarm": "node dist/cli.js swarm",
+		"docker:cache": "node dist/cli.js cache",
+		"docker:status": "node dist/cli.js status",
+		"preinstall": "node scripts/check-docker.js",
+		"postinstall": "npm run build"
+	},
+	"keywords": [
+		"docker",
+		"swarm",
+		"transformers",
+		"ai",
+		"cache",
+		"performance"
+	],
+	"author": "",
+	"license": "MIT",
+	"dependencies": {
+		"chalk": "^4.1.2",
+		"commander": "^11.0.0",
+		"dockerode": "^3.3.5",
+		"dotenv": "^16.3.1",
+		"inquirer": "^8.2.5",
+		"js-yaml": "^4.1.0",
+		"node-cache": "^5.1.2",
+		"uuid": "^9.0.0",
+		"winston": "^3.10.0",
+		"yargs": "^17.7.2"
+	},
+	"devDependencies": {
+		"@types/dockerode": "^3.3.19",
+		"@types/inquirer": "^8.2.6",
+		"@types/js-yaml": "^4.0.5",
+		"@types/node": "^20.5.0",
+		"@types/uuid": "^9.0.2",
+		"@types/yargs": "^17.0.24",
+		"rimraf": "^5.0.1",
+		"ts-node": "^10.9.1",
+		"typescript": "^5.1.6"
+	}
+}
