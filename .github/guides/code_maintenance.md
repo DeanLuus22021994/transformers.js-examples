@@ -24,7 +24,7 @@ A micro-module should:
 
 ### Standard Module Structure
 
-```
+```plaintext
 module/
   ├── index.js        # Public API
   ├── core.js         # Core functionality

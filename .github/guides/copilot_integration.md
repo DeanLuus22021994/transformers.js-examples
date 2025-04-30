@@ -6,7 +6,7 @@ This guide outlines our approach to optimizing the .copilot directory and implem
 
 ## Directory Structure
 
-```
+```plaintext
 .copilot/
   ├── prompts/          # Reusable prompt templates
   ├── snippets/         # Code snippets for Copilot

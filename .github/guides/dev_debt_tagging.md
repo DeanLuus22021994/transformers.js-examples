@@ -6,7 +6,7 @@ The DIR.TAG system provides a standardized way to track, categorize, and resolve
 
 ## Tag Format
 
-```
+```javascript
 // DIR.TAG: #category #priority
 // Description of the issue
 // @link: https://reference-link-or-documentation
