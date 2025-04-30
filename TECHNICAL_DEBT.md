@@ -5,7 +5,7 @@ The Technical Debt Management System provides an integrated solution for trackin
 ## System Components
 
 1. **VS Code Extension**
-   - `.vscode/extensions/dev-debt-processor/` - Extension providing debt management tools
+   - `.vscode/extensions/debt-engine/` - Extension providing technical debt management tools
    - Modular architecture for better testing and maintainability
 
 2. **Jest Integration**
@@ -14,10 +14,10 @@ The Technical Debt Management System provides an integrated solution for trackin
    - Full test coverage of scanner components
 
 3. **VS Code Tasks**
-   - Integrated task system for running debt scans
-   - Task: "Process Dev Debt Files" - Process debt documentation
-   - Task: "Create Dev Debt Template" - Create new debt documentation
-   - Task: "View Dev Debt Logs" - View processing logs
+   - Integrated task system for running technical debt scans
+   - Task: "Process Technical Debt Files" - Process technical debt documentation
+   - Task: "Create Debt Template" - Create new technical debt documentation
+   - Task: "View Debt Engine Logs" - View processing logs
 
 4. **Tagging System**
    - DIR.TAG structure with hashtag keys for easy identification
