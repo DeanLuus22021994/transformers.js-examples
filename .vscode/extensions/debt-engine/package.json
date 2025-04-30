@@ -1,0 +1,72 @@
+{
+  "name": "debt-engine",
+  "displayName": "Debt Engine",
+  "description": "Automatically processes technical debt files using modular Agile-aligned automation.",
+  "version": "0.2.0",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "dependencies": {
+    "glob": "^7.2.0",
+    "xml2js": "^0.6.2",
+    "yaml": "^2.3.4"
+  },
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "jest": "^29.5.0",
+    "sinon": "^15.0.1"
+  },
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "debt-engine.processDevDebt",
+        "title": "Process Technical Debt Files"
+      },
+      {
+        "command": "debt-engine.viewLogs",
+        "title": "View Debt Engine Logs"
+      },
+      {
+        "command": "debt-engine.createTemplate",
+        "title": "Create Debt Template"
+      },
+      {
+        "command": "debt-engine.toggleFeature",
+        "title": "Toggle Debt Engine Feature"
+      },
+      {
+        "command": "debt-engine.scanDebtTags",
+        "title": "Scan Code for Technical Debt Tags"
+      }
+    ],
+    "configuration": {
+      "title": "Debt Engine",
+      "properties": {
+        "debtEngine.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable automatic processing of technical debt files on startup"
+        },
+        "debtEngine.scanOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Scan for debt tags when saving files"
+        },
+        "debtEngine.autoCreateReports": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically create reports when scanning for debt"
+        }
+      }
+    }
+  }
+}

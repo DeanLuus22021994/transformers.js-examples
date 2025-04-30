@@ -25,7 +25,7 @@ export default {
         'node-cjs/**/*.js',
         'node-esm/**/*.js',
         'whisper-node/**/*.js',
-        '.vscode/extensions/dev-debt-processor/**/*.js',
+        '.vscode/extensions/debt-engine/**/*.js',
         '.copilot/**/*.js',
         '!**/node_modules/**',
         '!**/dist/**',
@@ -47,7 +47,7 @@ export default {
     ],
     moduleDirectories: [
         'node_modules',
-        '.vscode/extensions/dev-debt-processor',
+        '.vscode/extensions/debt-engine',
         '.copilot'
     ]
 };

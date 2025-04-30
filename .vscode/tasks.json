@@ -4,120 +4,176 @@
 		{
 			"label": "Run All Tests",
 			"type": "shell",
-			"command": "node --experimental-vm-modules --max-old-space-size=8192 node_modules/jest/bin/jest.js",
+			"command": "echo '[INFO] Starting all tests...' && node --experimental-vm-modules --max-old-space-size=8192 node_modules/jest/bin/jest.js || (echo '[FATAL] Tests failed' && exit 1)",
 			"group": {
 				"kind": "test",
 				"isDefault": true
-			}
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": []
 		},
 		{
 			"label": "Run Tests with Coverage",
 			"type": "shell",
-			"command": "node --experimental-vm-modules --max-old-space-size=8192 node_modules/jest/bin/jest.js --coverage",
-			"group": "test"
+			"command": "echo '[INFO] Running tests with coverage...' && node --experimental-vm-modules --max-old-space-size=8192 node_modules/jest/bin/jest.js --coverage || (echo '[FATAL] Coverage tests failed' && exit 1)",
+			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": []
 		},
 		{
 			"label": "Run GPU Tests",
 			"type": "shell",
-			"command": "npm run test:gpu",
+			"command": "echo '[INFO] Running GPU tests...' && npm run test:gpu || (echo '[FATAL] GPU tests failed' && exit 1)",
 			"group": "test",
 			"options": {
 				"env": {
 					"WEBGPU_FORCE_DISCRETE": "1",
 					"GPU_MEMORY_LIMIT": "4096"
 				}
-			}
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": []
 		},
 		{
 			"label": "Run Non-GPU Tests",
 			"type": "shell",
-			"command": "npm run test:no-gpu",
-			"group": "test"
+			"command": "echo '[INFO] Running non-GPU tests...' && npm run test:no-gpu || (echo '[FATAL] Non-GPU tests failed' && exit 1)",
+			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": []
 		},
 		{
 			"label": "Docker: Build Test Containers",
 			"type": "shell",
-			"command": "npm run docker:build",
+			"command": "echo '[INFO] Building Docker test containers...' && npm run docker:build || (echo '[FATAL] Docker build failed' && exit 1)",
 			"group": "build",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
 			"problemMatcher": []
 		},
 		{
 			"label": "Docker: Run All Tests",
 			"type": "shell",
-			"command": "npm run docker:test:all",
+			"command": "echo '[INFO] Running all Docker tests...' && npm run docker:test:all || (echo '[FATAL] Docker tests failed' && exit 1)",
 			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
 			"problemMatcher": []
 		},
 		{
 			"label": "Docker: Run Tests with Coverage",
 			"type": "shell",
-			"command": "npm run docker:test:coverage",
+			"command": "echo '[INFO] Running Docker tests with coverage...' && npm run docker:test:coverage || (echo '[FATAL] Docker coverage tests failed' && exit 1)",
 			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
 			"problemMatcher": []
 		},
 		{
 			"label": "Docker: Run GPU Tests",
 			"type": "shell",
-			"command": "npm run docker:test:gpu",
+			"command": "echo '[INFO] Running Docker GPU tests...' && npm run docker:test:gpu || (echo '[FATAL] Docker GPU tests failed' && exit 1)",
 			"group": "test",
-			"problemMatcher": [],
 			"options": {
 				"env": {
 					"NVIDIA_VISIBLE_DEVICES": "all",
 					"NVIDIA_DRIVER_CAPABILITIES": "compute,utility,graphics"
 				}
-			}
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": []
 		},
 		{
 			"label": "Docker: Run Non-GPU Tests",
 			"type": "shell",
-			"command": "npm run docker:test:no-gpu",
+			"command": "echo '[INFO] Running Docker non-GPU tests...' && npm run docker:test:no-gpu || (echo '[FATAL] Docker non-GPU tests failed' && exit 1)",
 			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
 			"problemMatcher": []
 		},
 		{
 			"label": "Build All Projects",
 			"type": "shell",
-			"command": "npm run build",
+			"command": "echo '[INFO] Building all projects...' && npm run build || (echo '[FATAL] Build failed' && exit 1)",
 			"group": {
 				"kind": "build",
 				"isDefault": true
-			}
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": []
 		},
 		{
 			"label": "Initialize Dev Container",
 			"type": "shell",
-			"command": "cd .devcontainer && docker-compose up -d"
-		},
-		{
-			"label": "Run vanilla-js in Docker",
-			"type": "shell",
-			"command": "cd vanilla-js && docker-compose up",
+			"command": "echo '[INFO] Initializing dev container...' && cd .devcontainer && docker-compose up -d || (echo '[FATAL] Dev container init failed' && exit 1)",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
 			"problemMatcher": []
 		},
 		{
 			"label": "Build and Pull Submodules",
 			"type": "shell",
-			"command": "bash .devcontainer/scripts/clone_submodules.sh && bash .devcontainer/scripts/build_all.sh",
+			"command": "echo '[INFO] Building and pulling submodules...' && bash .devcontainer/scripts/clone_submodules.sh && bash .devcontainer/scripts/build_all.sh || (echo '[FATAL] Submodule build failed' && exit 1)",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
 			"problemMatcher": []
 		},
 		{
 			"label": "Check GPU Status",
 			"type": "shell",
-			"command": "nvidia-smi || echo 'No GPU detected'",
+			"command": "echo '[INFO] Checking GPU status...' && nvidia-smi || (echo '[WARNING] No GPU detected' && exit 0)",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
 			"problemMatcher": []
 		},
 		{
 			"label": "Monitor GPU Usage",
 			"type": "shell",
-			"command": "nvidia-smi -l 2",
+			"command": "echo '[INFO] Monitoring GPU usage...' && nvidia-smi -l 2 || (echo '[WARNING] GPU monitoring failed' && exit 0)",
 			"isBackground": true,
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
 			"problemMatcher": []
 		},
 		{
 			"label": "Optimize TypeScript Performance",
 			"type": "shell",
-			"command": "npm run build -- --incremental",
+			"command": "echo '[INFO] Optimizing TypeScript performance...' && npm run build -- --incremental || (echo '[FATAL] TypeScript optimization failed' && exit 1)",
 			"group": "build",
 			"problemMatcher": [
 				"$tsc"
@@ -126,13 +182,17 @@
 		{
 			"label": "Clear TypeScript Cache",
 			"type": "shell",
-			"command": "rm -f .tsbuildinfo && npm run build",
+			"command": "echo '[INFO] Clearing TypeScript cache...' && rm -f .tsbuildinfo && npm run build || (echo '[FATAL] Clear cache failed' && exit 1)",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
 			"problemMatcher": []
 		},
 		{
 			"label": "Start WebGPU Dev Server",
 			"type": "shell",
-			"command": "npx vite --force",
+			"command": "echo '[INFO] Starting WebGPU dev server...' && npx vite --force || (echo '[FATAL] Dev server failed' && exit 1)",
 			"isBackground": true,
 			"problemMatcher": {
 				"pattern": {
@@ -148,30 +208,39 @@
 		},
 		// Dev Debt Tasks
 		{
-			"label": "Process Dev Debt Files",
+			"label": "Process Technical Debt Files",
 			"type": "shell",
-			"command": "${command:dev-debt-processor.processDevDebt}",
-			"problemMatcher": [],
-			"group": "none",
+			"command": "echo '[INFO] Processing Technical Debt files...' && ${command:debt-engine.processDevDebt} || (echo '[FATAL] Technical Debt processing failed' && exit 1)",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
 			"presentation": {
 				"reveal": "always",
-				"panel": "dedicated",
-				"showReuseMessage": false
-			}
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
 		},
 		{
-			"label": "Create Dev Debt Template",
+			"label": "Create Debt Template",
 			"type": "shell",
-			"command": "${command:dev-debt-processor.createTemplate}",
-			"problemMatcher": [],
-			"group": "none"
+			"command": "echo '[INFO] Creating Debt template...' && ${command:debt-engine.createTemplate} || (echo '[FATAL] Debt template creation failed' && exit 1)",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": []
 		},
 		{
-			"label": "View Dev Debt Logs",
+			"label": "View Debt Engine Logs",
 			"type": "shell",
-			"command": "${command:dev-debt-processor.viewLogs}",
-			"problemMatcher": [],
-			"group": "none"
+			"command": "echo '[INFO] Viewing Debt Engine logs...' && ${command:debt-engine.viewLogs} || (echo '[FATAL] Viewing Debt Engine logs failed' && exit 1)",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": []
 		},
 		// Testing tasks with dependencies
 		{
@@ -195,7 +264,11 @@
 				"Docker: Run All Tests"
 			],
 			"dependsOrder": "sequence",
-			"group": "test"
+			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			}
 		},
 		{
 			"label": "Setup Development Environment",
@@ -225,7 +298,7 @@
 		{
 			"label": "Container: Setup Environment",
 			"type": "shell",
-			"command": "docker compose exec -t dev bash .devcontainer/scripts/setup/init.sh",
+			"command": "echo '[INFO] Setting up container environment...' && docker compose exec -t dev bash .devcontainer/scripts/setup/init.sh || (echo '[FATAL] Container setup failed' && exit 1)",
 			"group": "build",
 			"presentation": {
 				"reveal": "always",
@@ -236,7 +309,7 @@
 		{
 			"label": "Container: Verify Setup",
 			"type": "shell",
-			"command": "docker compose exec -t dev bash .devcontainer/scripts/checks/readiness.sh",
+			"command": "echo '[INFO] Verifying container setup...' && docker compose exec -t dev bash .devcontainer/scripts/checks/readiness.sh || (echo '[FATAL] Container verification failed' && exit 1)",
 			"group": "test",
 			"presentation": {
 				"reveal": "always",
@@ -247,7 +320,7 @@
 		{
 			"label": "Container: Force Precompile",
 			"type": "shell",
-			"command": "docker compose exec -t dev bash -c 'FORCE_PRECOMPILE=1 bash .devcontainer/scripts/precompile/trigger.sh'",
+			"command": "echo '[INFO] Forcing precompile in container...' && docker compose exec -t dev bash -c 'FORCE_PRECOMPILE=1 bash .devcontainer/scripts/precompile/trigger.sh' || (echo '[FATAL] Container precompile failed' && exit 1)",
 			"group": "build",
 			"presentation": {
 				"reveal": "always",
@@ -258,7 +331,7 @@
 		{
 			"label": "Container: Check GPU Status",
 			"type": "shell",
-			"command": "docker compose exec -t dev bash .devcontainer/scripts/checks/gpu-check.sh",
+			"command": "echo '[INFO] Checking container GPU status...' && docker compose exec -t dev bash .devcontainer/scripts/checks/gpu-check.sh || (echo '[WARNING] No GPU detected in container' && exit 0)",
 			"group": "test",
 			"presentation": {
 				"reveal": "always",
@@ -269,7 +342,7 @@
 		{
 			"label": "Container: Run Azure Check",
 			"type": "shell",
-			"command": "docker compose exec -t dev bash .devcontainer/scripts/checks/azure-check.sh",
+			"command": "echo '[INFO] Running Azure check in container...' && docker compose exec -t dev bash .devcontainer/scripts/checks/azure-check.sh || (echo '[FATAL] Azure check failed' && exit 1)",
 			"group": "test",
 			"presentation": {
 				"reveal": "always",
@@ -280,26 +353,11 @@
 		{
 			"label": "Container: Execute Command",
 			"type": "shell",
-			"command": "docker compose exec -t dev bash -c '${input:containerCommand}'",
+			"command": "echo '[INFO] Executing command in container...' && docker compose exec -t dev bash -c '${input:containerCommand}' || (echo '[FATAL] Container command failed' && exit 1)",
 			"group": "none",
 			"presentation": {
 				"reveal": "always",
 				"panel": "new"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "Process Dev Debt Files",
-			"type": "shell",
-			"command": "${command:dev-debt-processor.processDevDebt}",
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"presentation": {
-				"reveal": "always",
-				"panel": "new",
-				"focus": true
 			},
 			"problemMatcher": []
 		}
