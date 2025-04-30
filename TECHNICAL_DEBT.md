@@ -38,7 +38,7 @@ The Technical Debt Management System provides an integrated solution for trackin
    // DIR.TAG: /refactor/performance #optimization #memory-usage
    ```
 
-3. **Review generated reports in the `debt-reports` folder**
+2. **Review generated reports in the `debt-reports` folder**
 
 ## Next Steps
 
