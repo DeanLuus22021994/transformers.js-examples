@@ -1,0 +1,25 @@
+{
+	"version": "1.0.0",
+	"defaultModel": "transformers.js",
+	"testFramework": "jest",
+	"frameworks": [
+		"vanilla-js",
+		"react",
+		"vue",
+		"svelte",
+		"angular"
+	],
+	"environments": {
+		"browser": true,
+		"node": true,
+		"webworker": true
+	},
+	"transformersOptions": {
+		"quantization": {
+			"enabled": true,
+			"bits": 8
+		},
+		"cacheModels": true,
+		"modelCachePath": "../.model-cache"
+	}
+}
