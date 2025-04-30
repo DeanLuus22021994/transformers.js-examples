@@ -4,8 +4,8 @@
 import * as http from 'http';
 import { Logger } from '../utils/logger';
 
-// Initialize logger
-const logger = new Logger('mcp-copilot-bridge');
+// Get logger instance
+const logger = Logger.getInstance();
 
 /**
  * MCPCopilotBridge class for connecting MCP with Copilot
