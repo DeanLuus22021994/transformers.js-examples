@@ -9,21 +9,23 @@ services:
         - BUILDKIT_INLINE_CACHE=1
     volumes:
       - ..:/workspace:cached
-      - ~/.gitconfig:/home/node/.gitconfig
-      - ~/.ssh:/home/node/.ssh
-      - node_modules_volume:/workspace/node_modules
-      - azure_config_volume:/home/node/.azure
-      - precompiled_volume:/workspace/.precompiled
-      - build_cache_volume:/root/.cache
+      - ~/.gitconfig:/home/node/.gitconfig:ro
+      - ~/.ssh:/home/node/.ssh:ro
+      - node_modules_volume:/workspace/node_modules:delegated
+      - azure_config_volume:/home/node/.azure:delegated
+      - precompiled_volume:/workspace/.precompiled:delegated
+      - build_cache_volume:/root/.cache:delegated
       - ./volumes/config:/workspace/.config:cached
+      - vscode_extensions:/home/node/.vscode-server/extensions
     environment:
       - NODE_ENV=development
-      - AZURE_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}
-      - AZURE_TENANT_ID=${AZURE_TENANT_ID}
-      - AZURE_STORAGE_CONNECTION_STRING=${AZURE_STORAGE_CONNECTION_STRING}
+      - AZURE_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID:-}
+      - AZURE_TENANT_ID=${AZURE_TENANT_ID:-}
+      - AZURE_STORAGE_CONNECTION_STRING=${AZURE_STORAGE_CONNECTION_STRING:-}
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
       - BUILDKIT_PROGRESS=plain
+      - TRANSFORMERS_JS_CACHE_PATH=/workspace/.precompiled
     deploy:
       resources:
         reservations:
@@ -31,16 +33,18 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-    privileged: true
+    privileged: false
     security_opt:
       - seccomp:unconfined
     cap_add:
       - SYS_ADMIN
     command: sleep infinity
+    networks:
+      - transformers-network
 
   # Azure Storage Emulator
   azurite:
-    image: mcr.microsoft.com/azure-storage/azurite
+    image: mcr.microsoft.com/azure-storage/azurite:latest
     restart: unless-stopped
     ports:
       - "10000:10000"
@@ -48,6 +52,12 @@ services:
       - "10002:10002"
     volumes:
       - azurite_data:/data
+    networks:
+      - transformers-network
+
+networks:
+  transformers-network:
+    driver: bridge
 
 volumes:
   node_modules_volume:
@@ -71,4 +81,6 @@ volumes:
       o: bind
       device: ${PWD}/volumes/cache
   azurite_data:
+    driver: local
+  vscode_extensions:
     driver: local

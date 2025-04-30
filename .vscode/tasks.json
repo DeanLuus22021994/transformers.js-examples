@@ -136,7 +136,8 @@
 			"isBackground": true,
 			"problemMatcher": {
 				"pattern": {
-					"regexp": "."
+					"regexp": ".",
+					"file": 1
 				},
 				"background": {
 					"activeOnStart": true,
@@ -220,6 +221,80 @@
 				"Run Non-GPU Tests"
 			],
 			"dependsOrder": "parallel"
+		},
+		{
+			"label": "Container: Setup Environment",
+			"type": "shell",
+			"command": "docker compose exec -t dev bash .devcontainer/scripts/setup/init.sh",
+			"group": "build",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Container: Verify Setup",
+			"type": "shell",
+			"command": "docker compose exec -t dev bash .devcontainer/scripts/checks/readiness.sh",
+			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Container: Force Precompile",
+			"type": "shell",
+			"command": "docker compose exec -t dev bash -c 'FORCE_PRECOMPILE=1 bash .devcontainer/scripts/precompile/trigger.sh'",
+			"group": "build",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Container: Check GPU Status",
+			"type": "shell",
+			"command": "docker compose exec -t dev bash .devcontainer/scripts/checks/gpu-check.sh",
+			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Container: Run Azure Check",
+			"type": "shell",
+			"command": "docker compose exec -t dev bash .devcontainer/scripts/checks/azure-check.sh",
+			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Container: Execute Command",
+			"type": "shell",
+			"command": "docker compose exec -t dev bash -c '${input:containerCommand}'",
+			"group": "none",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": []
+		}
+	],
+	"inputs": [
+		{
+			"id": "containerCommand",
+			"description": "Command to execute in container",
+			"default": "echo 'Hello from container'",
+			"type": "promptString"
 		}
 	]
 }

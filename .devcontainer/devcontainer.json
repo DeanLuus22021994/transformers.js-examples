@@ -53,7 +53,8 @@
 		5173
 	],
 	"postCreateCommand": "bash .devcontainer/scripts/setup/init.sh",
-	"postStartCommand": "bash .devcontainer/scripts/checks/readiness.sh && bash .devcontainer/scripts/precompile/trigger.sh",
+	// Fixed: Change postStartCommand to run init first if setup isn't complete, then check readiness
+	"postStartCommand": "if [ ! -f \".devcontainer/.setup-complete\" ]; then bash .devcontainer/scripts/setup/init.sh; fi && bash .devcontainer/scripts/checks/readiness.sh && bash .devcontainer/scripts/precompile/trigger.sh",
 	"features": {
 		"ghcr.io/devcontainers/features/azure-cli:1": {},
 		"ghcr.io/devcontainers/features/github-cli:1": {},

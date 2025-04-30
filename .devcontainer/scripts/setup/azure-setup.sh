@@ -19,8 +19,8 @@ if [ -f ".devcontainer/config/azure-settings.json" ]; then
   LOCATION=$(jq -r '.location' .devcontainer/config/azure-settings.json)
 else
   # Default values if config file doesn't exist
-  RESOURCE_GROUP="dev-debt-rg"
-  STORAGE_ACCOUNT="devdebtstorage$RANDOM"
+  RESOURCE_GROUP="transformers-js-examples-rg"
+  STORAGE_ACCOUNT="transformersjsstorage$RANDOM"
   LOCATION="eastus"
 
   # Create config directory and file
@@ -43,6 +43,11 @@ bash .devcontainer/scripts/setup/azure-storage-setup.sh
 # Setup Azure Local Emulator
 bash .devcontainer/scripts/setup/azure-emulator-setup.sh
 
+# Define variables for Azure Log Analytics
+WORKSPACE_ID="${AZURE_LOG_WORKSPACE_ID:-}"
+WORKSPACE_KEY="${AZURE_LOG_KEY:-}"
+CONN_STRING="${AZURE_STORAGE_CONNECTION_STRING:-DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;}"
+
 # Export environment variables
 log_info "Setting up Azure environment variables..."
 echo "export AZURE_LOG_WORKSPACE_ID=\"$WORKSPACE_ID\"" >> ~/.bashrc
@@ -59,7 +64,7 @@ AZURE_TENANT_ID=your-tenant-id
 AZURE_CLIENT_ID=your-client-id
 
 # For local development with Azurite
-AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;
+AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
 EOF
 fi
 
