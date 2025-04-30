@@ -32,11 +32,10 @@ export default {
         '!**/build/**'
     ],
     // Skip test runs for WebGPU-dependent projects with insufficient GPU memory
-    testPathIgnorePatterns: [
-        process.env.GPU_MEM_GB && parseFloat(process.env.GPU_MEM_GB) < 5 ?
-            ['<rootDir>/janus-webgpu/', '<rootDir>/smollm-webgpu/', '<rootDir>/webgpu-clip/', '<rootDir>/webgpu-nomic-embed/'] :
-            []
-    ],
+    testPathIgnorePatterns:
+        process.env.GPU_MEM_GB && parseFloat(process.env.GPU_MEM_GB) < 5
+            ? ['<rootDir>/janus-webgpu/', '<rootDir>/smollm-webgpu/', '<rootDir>/webgpu-clip/', '<rootDir>/webgpu-nomic-embed/']
+            : [],
     // Setup files for browser-like environment
     setupFiles: [
         '<rootDir>/__tests__/setup.js'
