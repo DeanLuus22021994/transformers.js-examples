@@ -1,0 +1,100 @@
+version: '3.8'
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - PERSONAL_ACCESS_TOKEN=${PERSONAL_ACCESS_TOKEN}
+    volumes:
+      # Main repository with delegated performance for better I/O
+      - ..:/workspaces/transformers.js-examples:delegated
+
+      # Persistent volumes for submodules
+      - transformers-js-vol:/workspaces/transformers.js
+      - runner-images-vol:/workspaces/runner-images
+      - servers-vol:/workspaces/servers
+      - starter-workflows-vol:/workspaces/starter-workflows
+      - github-mcp-server-vol:/workspaces/github-mcp-server
+      - vscode-vol:/workspaces/vscode
+      - linuxkit-vol:/workspaces/linuxkit
+
+      # Node modules caching for faster installs
+      - node_modules_cache:/workspaces/transformers.js-examples/node_modules
+      - npm_cache:/root/.npm
+      - yarn_cache:/usr/local/share/.cache/yarn
+
+      # Project-specific volume mounts with delegated consistency
+      - vanilla-js-vol:/workspaces/transformers.js-examples/vanilla-js/node_modules
+      - node-cjs-vol:/workspaces/transformers.js-examples/node-cjs/node_modules
+      - node-esm-vol:/workspaces/transformers.js-examples/node-esm/node_modules
+      - whisper-node-vol:/workspaces/transformers.js-examples/whisper-node/node_modules
+      - janus-webgpu-vol:/workspaces/transformers.js-examples/janus-webgpu/node_modules
+      - smollm-webgpu-vol:/workspaces/transformers.js-examples/smollm-webgpu/node_modules
+
+    environment:
+      - PERSONAL_ACCESS_TOKEN=${PERSONAL_ACCESS_TOKEN}
+      # GPU detection environment variables
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - HAS_GPU=${HAS_GPU:-false}
+      - GPU_MEM_GB=${GPU_MEM_GB:-0}
+
+    # Expose common ports for web applications
+    ports:
+      - "3000:3000" # Standard web app
+      - "3001:3001" # API server
+      - "5173:5173" # Vite dev server
+      - "8000:8000" # MCP server
+      - "8080:8080" # Alternative web server
+
+    command: /bin/sh -c "cd /workspaces/transformers.js-examples && ./.devcontainer/scripts/clone_submodules.sh && ./.devcontainer/scripts/build_all.sh"
+
+    # GPU configuration with optional support
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu, utility, compute, video ]
+
+volumes:
+  # Submodule volumes
+  transformers-js-vol:
+    driver: local
+  runner-images-vol:
+    driver: local
+  servers-vol:
+    driver: local
+  starter-workflows-vol:
+    driver: local
+  github-mcp-server-vol:
+    driver: local
+  vscode-vol:
+    driver: local
+  linuxkit-vol:
+    driver: local
+
+  # Cache volumes
+  node_modules_cache:
+    driver: local
+  npm_cache:
+    driver: local
+  yarn_cache:
+    driver: local
+
+  # Project-specific volumes
+  vanilla-js-vol:
+    driver: local
+  node-cjs-vol:
+    driver: local
+  node-esm-vol:
+    driver: local
+  whisper-node-vol:
+    driver: local
+  janus-webgpu-vol:
+    driver: local
+  smollm-webgpu-vol:
+    driver: local

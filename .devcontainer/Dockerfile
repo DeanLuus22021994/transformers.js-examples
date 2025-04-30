@@ -14,11 +14,14 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 	python3-dev python3-pip python3-venv \
 	&& apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js (latest LTS)
+# Install Node.js (latest LTS) with optimized caching
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 	&& apt-get update \
 	&& apt-get install -y nodejs \
-	&& npm install -g npm@latest
+	&& npm install -g npm@latest \
+	&& npm config set cache /root/.npm --global \
+	&& npm install -g yarn node-gyp typescript jest webpack webpack-cli vite \
+	&& npm cache clean --force
 
 # Install Go for linuxkit and other Go-based tools
 RUN wget -q https://go.dev/dl/go1.21.0.linux-amd64.tar.gz \
@@ -36,16 +39,26 @@ ENV PATH=$PATH:/root/.cargo/bin
 # Configure Git to use the Personal Access Token
 RUN git config --global url."https://${PERSONAL_ACCESS_TOKEN}@github.com/".insteadOf "https://github.com/"
 
-# NVIDIA CUDA for GPU support if available
-RUN wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb \
+# NVIDIA CUDA for GPU support if available (will gracefully degrade if GPU not present)
+RUN mkdir -p /etc/apt/keyrings \
+	&& wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb \
 	&& dpkg -i cuda-keyring_1.1-1_all.deb \
 	&& apt-get update \
-	&& apt-get -y install cuda-toolkit-12-3 \
+	&& apt-get -y install --no-install-recommends cuda-toolkit-12-3 cuda-minimal-build-12-3 \
 	&& rm cuda-keyring_1.1-1_all.deb \
-	&& apt-get clean -y && rm -rf /var/lib/apt/lists/*
+	&& apt-get clean -y && rm -rf /var/lib/apt/lists/* \
+	&& mkdir -p /usr/local/cuda-12.3/cuda-samples
 
+# Set up environment variables for CUDA
 ENV PATH=$PATH:/usr/local/cuda/bin
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64
+ENV CUDA_PATH=/usr/local/cuda
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=all
+
+# Install GPU detection script
+COPY scripts/detect-gpu.sh /usr/local/bin/detect-gpu
+RUN chmod +x /usr/local/bin/detect-gpu
 
 # Create scripts directory for submodule management and builds
 RUN mkdir -p /workspaces/scripts

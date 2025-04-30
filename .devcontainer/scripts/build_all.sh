@@ -10,21 +10,32 @@ command_exists() {
   command -v "$1" >/dev/null 2>&1
 }
 
-# Function to check if GPU is available
-check_gpu() {
-  if command_exists nvidia-smi; then
-    echo "NVIDIA GPU detected"
-    export HAS_GPU=true
-    # Get GPU memory in MB
-    GPU_MEM=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits | awk '{print $1}')
-    export GPU_MEM_GB=$(echo "scale=1; $GPU_MEM/1024" | bc)
-    echo "GPU memory: ${GPU_MEM_GB}GB"
-  else
-    echo "No NVIDIA GPU detected"
-    export HAS_GPU=false
-    export GPU_MEM_GB=0
+# Run GPU detection script and source the environment variables
+if [ -f "/usr/local/bin/detect-gpu" ]; then
+  echo "Running GPU detection..."
+  /usr/local/bin/detect-gpu
+
+  if [ -f "/tmp/gpu-env" ]; then
+    source /tmp/gpu-env
   fi
-}
+else
+  # Fallback GPU detection if the script is not available
+  check_gpu() {
+    if command_exists nvidia-smi; then
+      echo "NVIDIA GPU detected"
+      export HAS_GPU=true
+      # Get GPU memory in MB
+      GPU_MEM=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits | awk '{print $1}')
+      export GPU_MEM_GB=$(echo "scale=1; $GPU_MEM/1024" | bc)
+      echo "GPU memory: ${GPU_MEM_GB}GB"
+    else
+      echo "No NVIDIA GPU detected"
+      export HAS_GPU=false
+      export GPU_MEM_GB=0
+    fi
+  }
+  check_gpu
+fi
 
 # Check GPU status
 check_gpu

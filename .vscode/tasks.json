@@ -17,6 +17,18 @@
 			"group": "test"
 		},
 		{
+			"label": "Run GPU Tests",
+			"type": "shell",
+			"command": "npm run test:gpu",
+			"group": "test"
+		},
+		{
+			"label": "Run Non-GPU Tests",
+			"type": "shell",
+			"command": "npm run test:no-gpu",
+			"group": "test"
+		},
+		{
 			"label": "Build All Projects",
 			"type": "shell",
 			"command": "npm run build",

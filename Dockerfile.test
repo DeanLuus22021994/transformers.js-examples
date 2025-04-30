@@ -1,0 +1,35 @@
+FROM nvidia/cuda:12.0.0-runtime-ubuntu22.04
+
+# Set up Node.js with optimized caching
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+	&& apt-get install -y curl build-essential python3 bc git \
+	&& curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+	&& apt-get install -y nodejs \
+	&& npm install -g npm@latest \
+	&& npm config set cache /root/.npm --global \
+	&& npm install -g yarn node-gyp typescript jest webpack webpack-cli vite cross-env \
+	&& apt-get clean -y \
+	&& rm -rf /var/lib/apt/lists/*
+
+# Create GPU detection script
+COPY .devcontainer/scripts/detect-gpu.sh /usr/local/bin/detect-gpu
+RUN chmod +x /usr/local/bin/detect-gpu
+
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy the rest of the application
+COPY . .
+
+# Make the detect-gpu script executable
+RUN chmod +x .scripts/detect-gpu.js
+
+# Set environment variable for detecting GPU
+ENV HAS_GPU=false
+ENV GPU_MEM_GB=0
+
+# Default command to run non-GPU tests
+CMD ["npm", "run", "test:no-gpu"]

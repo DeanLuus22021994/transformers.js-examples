@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  test-no-gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    volumes:
+      # Main source code with delegated performance
+      - .:/app:delegated
+      # Cache node_modules
+      - node_modules_cache:/app/node_modules
+      - npm_cache:/root/.npm
+    environment:
+      - HAS_GPU=false
+      - GPU_MEM_GB=0
+    command: npm run test:no-gpu
+
+  test-gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    volumes:
+      # Main source code with delegated performance
+      - .:/app:delegated
+      # Cache node_modules
+      - node_modules_cache:/app/node_modules
+      - npm_cache:/root/.npm
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    command: bash -c "/usr/local/bin/detect-gpu && source /tmp/gpu-env && npm run test:gpu"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu, utility, compute, video ]
+
+volumes:
+  node_modules_cache:
+    driver: local
+  npm_cache:
+    driver: local

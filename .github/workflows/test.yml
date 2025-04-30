@@ -1,0 +1,48 @@
+name: Test Transformers.js Examples
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-no-gpu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run non-GPU tests
+        run: npm run test:no-gpu
+
+  test-gpu:
+    runs-on: ubuntu-latest
+    if: false  # Disable for now as GitHub Actions runners don't have GPUs
+               # Enable this job when using self-hosted runners with GPUs
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check GPU status
+        run: nvidia-smi || echo "No GPU detected"
+
+      - name: Run GPU-dependent tests
+        run: npm run test:gpu

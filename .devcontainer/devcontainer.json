@@ -3,6 +3,12 @@
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "dev",
 	"workspaceFolder": "/workspaces/transformers.js-examples",
+	"hostRequirements": {
+		"cpus": 4,
+		"memory": "8gb",
+		"storage": "32gb",
+		"gpu": "optional"
+	},
 	"features": {
 		"ghcr.io/devcontainers/features/git:1": {
 			"version": "latest",
@@ -43,11 +49,15 @@
 			}
 		}
 	},
-	"postCreateCommand": "bash .devcontainer/scripts/clone_submodules.sh",
+	"postCreateCommand": "bash .devcontainer/scripts/clone_submodules.sh && chmod +x .devcontainer/scripts/*.sh && /usr/local/bin/detect-gpu",
 	"postStartCommand": "bash .devcontainer/scripts/build_all.sh",
 	"remoteEnv": {
 		"PATH": "${containerEnv:PATH}:/usr/local/cuda/bin:/usr/local/go/bin",
-		"LD_LIBRARY_PATH": "${containerEnv:LD_LIBRARY_PATH}:/usr/local/cuda/lib64"
+		"LD_LIBRARY_PATH": "${containerEnv:LD_LIBRARY_PATH}:/usr/local/cuda/lib64",
+		"NVIDIA_VISIBLE_DEVICES": "all",
+		"NVIDIA_DRIVER_CAPABILITIES": "all",
+		"HAS_GPU": "${localEnv:HAS_GPU:false}",
+		"GPU_MEM_GB": "${localEnv:GPU_MEM_GB:0}"
 	},
 	"remoteUser": "root",
 	"forwardPorts": [
