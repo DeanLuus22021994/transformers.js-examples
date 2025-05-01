@@ -1,0 +1,25 @@
+# PIP_ID::HEADER
+# Python dependencies for debt management assistant
+
+# PIP_DEP::TRANSFORMERS
+# Hugging Face Transformers for model support
+transformers==4.35.0
+
+# PIP_DEP::TORCH
+# PyTorch (CPU version to keep image small)
+torch==2.1.0 --index-url https://download.pytorch.org/whl/cpu
+
+# PIP_DEP::UTILITIES
+# Utility libraries
+numpy==1.24.3
+pyyaml==6.0.1
+tqdm==4.66.1
+
+# PIP_DEP::API
+# API support
+fastapi==0.104.1
+uvicorn==0.23.2
+
+# PIP_ID::FOOTER
+# SchemaVersion: 1.0.0
+# RequirementsID: debt-management-assistant

@@ -1,0 +1,97 @@
+# YAML_ID::DEBT_CONFIG
+# filepath: c:\Projects\transformers.js-examples\.github\debt-management\docker\defaults\debt-config.yml
+# YAML_META::DESCRIPTION
+# Default configuration for the debt management assistant
+# YAML_META::VERSION
+# Version: 1.0.0
+
+# YAML_SECTION::MARKERS
+# Technical debt markers to scan for
+markers:
+  # YAML_MARKER::DEBT
+  - tag: "#debt:"
+    priority: high
+    label: technical-debt
+    color: "ff0000"
+  # YAML_MARKER::IMPROVE
+  - tag: "#improve:"
+    priority: medium
+    label: improvement
+    color: "ffbb00"
+  # YAML_MARKER::REFACTOR
+  - tag: "#refactor:"
+    priority: medium
+    label: refactor
+    color: "00aa00"
+  # YAML_MARKER::FIXME
+  - tag: "#fixme:"
+    priority: high
+    label: critical
+    color: "ff00ff"
+  # YAML_MARKER::TODO
+  - tag: "#todo:"
+    priority: low
+    label: enhancement
+    color: "0000ff"
+
+# YAML_SECTION::FILE_PATTERNS
+# File patterns for scanning
+file_patterns:
+  # YAML_PATTERN::INCLUDE
+  include_patterns:
+    - "**/*.js"
+    - "**/*.ts"
+    - "**/*.jsx"
+    - "**/*.tsx"
+    - "**/*.py"
+    - "**/*.cs"
+    - "**/*.java"
+    - "**/*.go"
+    - "**/*.rb"
+    - "**/*.md"
+  # YAML_PATTERN::EXCLUDE
+  exclude_patterns:
+    - "**/node_modules/**"
+    - "**/.git/**"
+    - "**/dist/**"
+    - "**/build/**"
+    - "**/coverage/**"
+    - "**/__pycache__/**"
+
+# YAML_SECTION::REPORTING
+# Reporting configuration
+reporting:
+  # YAML_REPORTING::SUMMARY
+  summary: true
+  # YAML_REPORTING::CREATE_ISSUES
+  create_issues: true
+  # YAML_REPORTING::WEEKLY_DIGEST
+  weekly_digest: true
+  # YAML_REPORTING::NOTIFY_AUTHORS
+  notify_authors: false
+  # YAML_REPORTING::ISSUE_SETTINGS
+  issue_settings:
+    # YAML_ISSUE::LABEL_PREFIX
+    label_prefix: "debt:"
+    # YAML_ISSUE::TEMPLATE
+    template: "technical-debt-issue.md"
+
+# YAML_SECTION::AI_ASSISTANT
+# AI assistant configuration
+ai_assistant:
+  # YAML_AI::MODEL
+  model: "smol2"
+  # YAML_AI::TEMPLATE_FORMAT
+  template_format: "handlebars"
+  # YAML_AI::MAX_TOKENS
+  max_tokens: 1024
+  # YAML_AI::TEMPERATURE
+  temperature: 0.7
+  # YAML_AI::AUTO_SUGGESTIONS
+  auto_suggestions: true
+  # YAML_AI::ANALYSIS_DEPTH
+  analysis_depth: "medium" # Options: light, medium, deep
+
+# YAML_ID::FOOTER
+# SchemaVersion: 1.0.0
+# ConfigID: debt-management-default-config

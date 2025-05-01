@@ -1,0 +1,37 @@
+{
+  // NPM_ID::HEADER
+  "name": "debt-management-assistant",
+  "version": "1.0.0",
+  "description": "AI-powered technical debt management system using transformers.js",
+  // NPM_CONFIG::SCRIPTS
+  "scripts": {
+    "start": "node scripts/debt-assistant.js",
+    "scan": "node scripts/scan-debt.js",
+    "report": "node scripts/generate-report.js",
+    "test": "jest"
+  },
+  // NPM_CONFIG::DEPENDENCIES
+  "dependencies": {
+    "@huggingface/inference": "^2.6.1",
+    "transformers.js": "^2.7.0",
+    "chalk": "^4.1.2",
+    "commander": "^11.0.0",
+    "dotenv": "^16.3.1",
+    "glob": "^10.3.3",
+    "js-yaml": "^4.1.0"
+  },
+  // NPM_CONFIG::DEV_DEPENDENCIES
+  "devDependencies": {
+    "jest": "^29.6.2"
+  },
+  // NPM_CONFIG::ENGINE
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  // NPM_ID::FOOTER
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/transformers.js-examples"
+  },
+  "license": "MIT"
+}
