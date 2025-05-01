@@ -151,24 +151,14 @@ WORKDIR /app
 
 # DOCKER_RUN::RUNTIME_DEPS
 # Install runtime dependencies optimized for GPU
-RUN apt-get update && apt-get install -y --no-install-recommends \
-	nodejs \
-	npm \
-	python3 \
-	python3-pip \
-	curl \	&& apt-get clean \
+RUN apt-get update && apt-get install -y --no-install-recommends nodejs npm python3 python3-pip curl \
+	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& curl -fsSL https://astral.sh/uv/install.sh | sh \
 	&& export PATH="$PATH:/root/.local/bin" \
 	&& ln -sf /root/.local/bin/uv /usr/local/bin/uv \
-	&& uv pip install --system \
-	torch==2.1.0+cu121 \
-	--index-url https://download.pytorch.org/whl/cu121 \
-	transformers==4.38.0 \
-	accelerate==0.24.0 \
-	bitsandbytes==0.41.0 \
-	numpy==1.24.3 \
-	pyyaml==6.0.1
+	&& uv pip install --system torch==2.1.0+cu121 --index-url https://download.pytorch.org/whl/cu121 \
+	transformers==4.38.0 accelerate==0.24.0 bitsandbytes==0.41.0 numpy==1.24.3 pyyaml==6.0.1
 
 # DOCKER_COPY::FROM_BUILDER
 # Copy installed npm modules
