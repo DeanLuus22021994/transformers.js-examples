@@ -6,8 +6,9 @@ This document addresses a technical debt issue with the UV package manager insta
 ## Action Items
 - [x] Task 1: Fix validate_uv_installation() function in entrypoint.sh to properly handle PATH and symbolic links
 - [x] Task 2: Remove duplicate call to validate_uv_installation() in main() function
-- [ ] Task 3: Add tests to verify UV package manager is working in the container
-- [ ] Task 4: Consider updating Dockerfile to ensure UV is installed in a location that's in PATH by default
+- [x] Task 3: Fix symbolic link in Dockerfile to use the correct installation path
+- [ ] Task 4: Add tests to verify UV package manager is working in the container
+- [ ] Task 5: Consider updating Dockerfile to ensure UV is installed in a location that's in PATH by default
 
 ## Priority
 High
@@ -24,8 +25,9 @@ The issue was fixed by:
 5. Creating bidirectional symbolic links between common installation directories
 6. Adding final validation to confirm installation is successful
 7. Removing a duplicate call to validate_uv_installation() in the main function
+8. Fixing the Dockerfile to use the correct installation path for the symbolic link (/root/.local/bin/uv instead of ~/.cargo/bin/uv)
 
-This approach ensures that UV is available in the PATH regardless of where it was installed, and includes robust error handling and recovery mechanisms.
+The root cause was identified by checking the terminal output from the build process, which showed UV being installed to /root/.local/bin, but the Dockerfile was trying to create a symbolic link from ~/.cargo/bin/uv, which didn't exist.
 
 ## Acceptance Criteria
 - UV package manager commands work without the "/bin/sh: 1: uv: not found" error

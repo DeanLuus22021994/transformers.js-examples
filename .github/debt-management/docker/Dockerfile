@@ -156,11 +156,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	npm \
 	python3 \
 	python3-pip \
-	curl \
-	&& apt-get clean \
+	curl \	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& curl -fsSL https://astral.sh/uv/install.sh | sh \
-	&& ln -s ~/.cargo/bin/uv /usr/local/bin/uv \
+	&& export PATH="$PATH:/root/.local/bin" \
+	&& ln -sf /root/.local/bin/uv /usr/local/bin/uv \
 	&& uv pip install --system \
 	torch==2.1.0+cu121 \
 	--index-url https://download.pytorch.org/whl/cu121 \
