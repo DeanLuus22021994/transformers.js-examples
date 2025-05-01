@@ -1,121 +1,268 @@
 #!/bin/bash
-# SCRIPT_ID::ENTRYPOINT
+# BASH_ID::ENTRYPOINT
 # filepath: c:\Projects\transformers.js-examples\.github\debt-management\docker\scripts\entrypoint.sh
-# SCRIPT_META::DESCRIPTION
-# Container entrypoint script that initializes the RTX-accelerated debt management assistant
-# SCRIPT_META::VERSION
+# BASH_META::DESCRIPTION
+# Entrypoint script for technical debt management container with RTX acceleration
+# BASH_META::VERSION
 # Version: 1.1.0
-# SCRIPT_META::AUTHOR
+# BASH_META::AUTHOR
 # Author: Transformers.js Team
 
-# SCRIPT_CONFIG::ERROR_HANDLING
-set -e
+# BASH_FUNCTION::CHECK_ENV
+# Check environment and output system information
+check_environment() {
+  echo "=========================================="
+  echo "Technical Debt Management System"
+  echo "Initializing environment..."
+  echo "=========================================="
 
-# SCRIPT_FUNCTION::LOG
-# Function to log messages with timestamps
-log() {
-  local level=$1
-  shift
-  echo "$(date '+%Y-%m-%d %H:%M:%S') [$level] $*"
+  # Check if running as root
+  if [ "$(id -u)" = "0" ]; then
+    echo "Running as root"
+  else
+    echo "Running as $(id -un)"
+  fi
+
+  # Output basic system info
+  echo "System information:"
+  echo "- Hostname: $(hostname)"
+  echo "- CPU: $(grep "model name" /proc/cpuinfo | head -n 1 | cut -d ":" -f 2 | sed 's/^[ \t]*//')"
+  echo "- CPU Cores: $(grep -c "processor" /proc/cpuinfo)"
+  echo "- Memory: $(free -h | grep "Mem:" | awk '{print $2}')"
+
+  # Check for NVIDIA GPU
+  if [ -x "$(command -v nvidia-smi)" ]; then
+    echo "- NVIDIA GPU detected"
+    echo "- GPU Information:"
+    nvidia-smi --query-gpu=name,driver_version,memory.total,compute_mode --format=csv,noheader
+
+    # Set environment variable to indicate GPU is available
+    export DEBT_GPU_AVAILABLE=true
+    export CUDA_VISIBLE_DEVICES=all
+  else
+    echo "- No NVIDIA GPU detected, will use CPU mode"
+    export DEBT_GPU_AVAILABLE=false
+  fi
+
+  # Check Python environment
+  echo "- Python version: $(python3 --version)"
+
+  # Check Node.js environment
+  echo "- Node.js version: $(node --version)"
+  echo "- NPM version: $(npm --version)"
+
+  echo "=========================================="
 }
 
-# SCRIPT_ACTION::WELCOME
-log "INFO" "Starting RTX-Accelerated Debt Management Assistant container"
-log "INFO" "Model cache directory: $MODEL_CACHE_DIR"
+# BASH_FUNCTION::SETUP_DIRS
+# Setup required directories
+setup_directories() {
+  echo "Setting up directories..."
 
-# SCRIPT_ACTION::CHECK_CUDA
-# Check for CUDA and GPU availability
-if command -v nvidia-smi &> /dev/null; then
-  log "INFO" "NVIDIA GPU detected, checking details..."
-  nvidia-smi
-
-  # Check if PyTorch can access the GPU
-  python3 -c "
-import torch
-if torch.cuda.is_available():
-    device_count = torch.cuda.device_count()
-    log_msg = f'PyTorch detected {device_count} CUDA device(s)'
-    for i in range(device_count):
-        log_msg += f\"\\n  - GPU {i}: {torch.cuda.get_device_name(i)}\"
-    print(log_msg)
-    # Set CUDA optimization flags
-    torch.backends.cudnn.benchmark = True
-    torch.backends.cuda.matmul.allow_tf32 = True
-    print('CUDA optimizations enabled')
-else:
-    print('WARNING: PyTorch cannot access CUDA. Check your installation')
-"
-else
-  log "WARN" "NVIDIA GPU not detected, falling back to CPU mode (slower performance)"
-  export CUDA_VISIBLE_DEVICES=""
-fi
-
-# SCRIPT_ACTION::SETUP_CACHE
-# Setup cache directories for improved performance
-for cache_dir in "$UV_CACHE_DIR" "$PIP_CACHE_DIR" "$NPM_CONFIG_CACHE" "$PYTHONPYCACHEPREFIX"; do
-  if [ ! -d "$cache_dir" ]; then
-    log "INFO" "Creating cache directory: $cache_dir"
-    mkdir -p "$cache_dir"
-    chmod 777 "$cache_dir"
-  fi
-done
-
-# SCRIPT_ACTION::CHECK_MODEL
-# Verify model files and optimized version exist
-if [ ! -d "$MODEL_CACHE_DIR" ] || [ -z "$(ls -A $MODEL_CACHE_DIR)" ]; then
-  log "WARN" "Model cache not found or empty, will download on first use (this may take some time)"
-elif [ -f "$MODEL_CACHE_DIR/optimized_model_cuda.pt" ]; then
-  log "INFO" "Found optimized GPU model, will use for acceleration"
-else
-  log "INFO" "Optimized GPU model not found, using standard model"
-fi
-
-# SCRIPT_ACTION::CHECK_CONFIG
-# Check for configuration files
-if [ ! -f "/app/config/debt-config.yml" ]; then
-  log "INFO" "Configuration not found, copying default config"
+  # Create config directory if it doesn't exist
   mkdir -p /app/config
-  cp /app/defaults/debt-config.yml /app/config/
-fi
 
-# SCRIPT_ACTION::SETUP_REPORTS_DIR
-# Set up reports directory
-mkdir -p /app/debt-reports
+  # Create model cache directory if it doesn't exist
+  mkdir -p /app/model-cache
 
-# SCRIPT_ACTION::PRELOAD_MODEL
-# Preload model for faster first inference if CUDA is available
-if [ -f "$MODEL_CACHE_DIR/optimized_model_cuda.pt" ] && python3 -c "import torch; exit(0 if torch.cuda.is_available() else 1)" &> /dev/null; then
-  log "INFO" "Preloading optimized model into GPU memory..."
-  python3 -c "
+  # Create debt reports directory if it doesn't exist
+  mkdir -p /app/debt-reports
+
+  # Create cache directories
+  mkdir -p /cache/uv
+  mkdir -p /cache/pip
+  mkdir -p /cache/npm
+  mkdir -p /cache/pycache
+
+  # Set appropriate permissions
+  chmod -R 777 /app/debt-reports
+  chmod -R 777 /app/model-cache
+  chmod -R 777 /cache
+
+  echo "Directories setup complete"
+}
+
+# BASH_FUNCTION::COPY_DEFAULTS
+# Copy default configuration files if they don't exist
+copy_defaults() {
+  echo "Checking for configuration files..."
+
+  # Copy default config if it doesn't exist
+  if [ ! -f "/app/config/debt-config.yml" ]; then
+    echo "Copying default configuration..."
+    cp /app/defaults/debt-config.yml /app/config/
+  else
+    echo "Configuration file exists, skipping"
+  fi
+
+  echo "Configuration check complete"
+}
+
+# BASH_FUNCTION::OPTIMIZE_FOR_GPU
+# Optimize settings for GPU if available
+optimize_for_gpu() {
+  if [ "$DEBT_GPU_AVAILABLE" = true ]; then
+    echo "Optimizing settings for GPU..."
+
+    # Set PyTorch to use GPU
+    export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:128
+
+    # Set environment variables for transformers
+    export TRANSFORMERS_CACHE=/app/model-cache
+    export TRANSFORMERS_OFFLINE=0
+    export CUDA_LAUNCH_BLOCKING=0
+
+    # Initialize model cache with optimized parameters
+    echo "Preloading model to optimize performance..."
+
+    # Enable JIT compilation for model
+    python3 -c "
 import torch
 import os
-import gc
+import sys
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
 try:
-    # Force garbage collection first
-    gc.collect()
-    torch.cuda.empty_cache()
+    print('Initializing model with GPU optimization...')
+    model_id = 'HuggingFaceTB/SmolLM2-1.7B-intermediate-checkpoints'
+    revision = 'step-125000'
+    cache_dir = '/app/model-cache'
 
-    # Load the optimized model
-    model_path = os.path.join('${MODEL_CACHE_DIR}', 'optimized_model_cuda.pt')
-    model = torch.jit.load(model_path)
-    model = model.to('cuda')
+    # Load tokenizer
+    tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision, cache_dir=cache_dir)
 
-    # Run a small inference to ensure everything is loaded
-    test_input = torch.ones(1, 10, dtype=torch.long).to('cuda')
-    with torch.inference_mode(), torch.cuda.amp.autocast():
-        _ = model(test_input)
+    # Load model with GPU optimizations
+    model = AutoModelForCausalLM.from_pretrained(
+        model_id,
+        revision=revision,
+        cache_dir=cache_dir,
+        torch_dtype=torch.float16,
+        device_map='auto',
+        low_cpu_mem_usage=True
+    )
 
-    print('Model successfully preloaded into GPU memory')
+    # Check if CUDA is available
+    if torch.cuda.is_available():
+        print(f'CUDA is available: {torch.cuda.get_device_name(0)}')
+
+        # Apply JIT compilation for faster inference
+        print('Optimizing model with JIT compilation...')
+        example_input = tokenizer('This is a test input for optimization', return_tensors='pt').to('cuda')
+
+        with torch.inference_mode(), torch.cuda.amp.autocast():
+            # Trace the model for faster inference
+            traced_model = torch.jit.trace(model, example_input['input_ids'])
+
+        # Save optimized model
+        torch.jit.save(traced_model, '/app/model-cache/optimized_model_cuda.pt')
+        print('Saved optimized CUDA model')
+
+        # Test inference
+        print('Testing optimized model...')
+        test_input = tokenizer('Analyze this code for technical debt issues:', return_tensors='pt').to('cuda')
+
+        with torch.inference_mode():
+            outputs = traced_model.generate(
+                test_input['input_ids'],
+                max_length=50,
+                temperature=0.7,
+                top_p=0.9,
+                do_sample=True
+            )
+
+        print('Model optimization complete!')
+        sys.exit(0)
+    else:
+        print('CUDA is not available, skipping JIT optimization')
+        sys.exit(1)
 except Exception as e:
-    print(f'Error preloading model: {e}')
+    print(f'Error during model optimization: {e}')
+    sys.exit(1)
 "
-fi
 
-# SCRIPT_ACTION::EXEC
-# Execute the provided command
-log "INFO" "Executing command: $*"
-exec "$@"
+    # Check the result
+    if [ $? -eq 0 ]; then
+      echo "GPU optimization completed successfully"
+    else
+      echo "GPU optimization failed, will use standard configuration"
+    fi
+  else
+    echo "No GPU detected, skipping GPU optimization"
+  fi
+}
 
-# SCRIPT_ID::FOOTER
-# SchemaVersion: 1.0.0
-# ScriptID: container-entrypoint
+# BASH_FUNCTION::RUN_HEALTH_CHECK
+# Run health check script
+run_health_check() {
+  echo "Running health check..."
+  node /app/scripts/health-check.js
+
+  # Check if health check passed
+  if [ $? -eq 0 ]; then
+    echo "Health check passed"
+    return 0
+  else
+    echo "Health check warnings or errors detected"
+    return 1
+  fi
+}
+
+# BASH_FUNCTION::MAIN
+# Main entrypoint function
+main() {
+  echo "Starting Technical Debt Management System..."
+
+  # Check environment
+  check_environment
+
+  # Setup directories
+  setup_directories
+
+  # Copy default configuration files
+  copy_defaults
+
+  # Optimize for GPU if available
+  if [ "$DEBT_GPU_AVAILABLE" = true ]; then
+    optimize_for_gpu
+  fi
+
+  # Run health check
+  run_health_check
+
+  echo "Technical Debt Management System initialization complete!"
+
+  # Start the service based on command
+  case "$1" in
+    analyze)
+      shift
+      echo "Running analysis on files: $@"
+      node /app/scripts/debt-assistant.js analyze "$@"
+      ;;
+    report)
+      echo "Generating debt report"
+      node /app/scripts/debt-assistant.js report
+      ;;
+    scorecard)
+      echo "Generating debt scorecard"
+      node /app/scripts/debt-scorecard.js generate
+      ;;
+    shell)
+      echo "Starting interactive shell"
+      /bin/bash
+      ;;
+    server)
+      echo "Starting debt management server"
+      # TODO: Implement server mode
+      echo "Server mode not yet implemented"
+      exit 1
+      ;;
+    *)
+      echo "Running command: $@"
+      exec "$@"
+      ;;
+  esac
+}
+
+# BASH_ACTION::RUN_MAIN
+# Run main function with all arguments
+main "$@"
