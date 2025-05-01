@@ -1,13 +1,23 @@
 # PIP_ID::HEADER
-# Python dependencies for debt management assistant
+# Python dependencies for RTX-accelerated debt management assistant
 
 # PIP_DEP::TRANSFORMERS
 # Hugging Face Transformers for model support
-transformers==4.35.0
+transformers==4.38.0
 
 # PIP_DEP::TORCH
-# PyTorch (CPU version to keep image small)
-torch==2.1.0 --index-url https://download.pytorch.org/whl/cpu
+# PyTorch with CUDA support for RTX acceleration
+torch==2.1.0+cu121 --index-url https://download.pytorch.org/whl/cu121
+
+# PIP_DEP::ACCELERATE
+# Hugging Face Accelerate for faster GPU inference
+accelerate==0.24.0
+
+# PIP_DEP::GPU_OPTIMIZATION
+# GPU optimization tools
+bitsandbytes==0.41.0
+triton==2.1.0
+ninja==1.11.1
 
 # PIP_DEP::UTILITIES
 # Utility libraries
@@ -16,10 +26,15 @@ pyyaml==6.0.1
 tqdm==4.66.1
 
 # PIP_DEP::API
-# API support
+# API support with optimization
 fastapi==0.104.1
-uvicorn==0.23.2
+uvicorn[standard]==0.23.2
+
+# PIP_DEP::MEMORY_MANAGEMENT
+# Memory management for large models
+psutil==5.9.5
+nvidia-ml-py==11.525.131
 
 # PIP_ID::FOOTER
-# SchemaVersion: 1.0.0
-# RequirementsID: debt-management-assistant
+# SchemaVersion: 1.1.0
+# RequirementsID: rtx-accelerated-debt-management-assistant

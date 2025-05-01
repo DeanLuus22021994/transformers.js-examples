@@ -80,7 +80,11 @@ reporting:
 # AI assistant configuration
 ai_assistant:
   # YAML_AI::MODEL
-  model: "smol2"
+  model: "SmolLM2-1.7B"
+  # YAML_AI::MODEL_ID
+  model_id: "HuggingFaceTB/SmolLM2-1.7B-intermediate-checkpoints"
+  # YAML_AI::MODEL_REVISION
+  model_revision: "step-125000"
   # YAML_AI::TEMPLATE_FORMAT
   template_format: "handlebars"
   # YAML_AI::MAX_TOKENS
