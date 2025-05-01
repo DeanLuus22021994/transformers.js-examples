@@ -63,7 +63,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # DOCKER_RUN::INSTALL_UV
 # Install UV for faster package installation and caching
 RUN curl -fsSL https://astral.sh/uv/install.sh | sh \
-	&& ln -s ~/.cargo/bin/uv /usr/local/bin/uv
+	&& export PATH="$PATH:/root/.local/bin" \
+	&& ln -sf /root/.local/bin/uv /usr/local/bin/uv \
+	&& echo 'export PATH="$PATH:/root/.local/bin"' >> /root/.bashrc
 
 # DOCKER_COPY::PACKAGE_JSON
 # Copy package files for npm install
@@ -83,6 +85,7 @@ COPY requirements.txt ./
 # Install Python dependencies with UV for speed and caching
 RUN echo "Installing Python dependencies with UV and GPU support" \
 	&& mkdir -p $UV_CACHE_DIR \
+	&& export PATH="$PATH:/root/.local/bin" \
 	&& uv pip install --cache-dir=$UV_CACHE_DIR -r requirements.txt
 
 # DOCKER_RUN::PYTHON_PRECOMPILE

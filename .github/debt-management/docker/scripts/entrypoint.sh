@@ -207,6 +207,87 @@ run_health_check() {
   fi
 }
 
+# BASH_FUNCTION::VALIDATE_UV
+# Validate UV installation and setup
+validate_uv_installation() {
+  echo "Validating UV package manager installation..."
+
+  # Add common installation directories to PATH (ensure this happens early)
+  export PATH="$PATH:/root/.local/bin:/usr/local/bin"
+
+  # Update environment in rc files for persistence
+  if ! grep -q "/root/.local/bin" ~/.bashrc; then
+    echo 'export PATH="$PATH:/root/.local/bin:/usr/local/bin"' >> ~/.bashrc
+    echo 'export PATH="$PATH:/root/.local/bin:/usr/local/bin"' >> ~/.profile
+  fi
+
+  # Export PATH in current shell
+  source ~/.bashrc || true
+
+  # Check if UV is in PATH after adding the common directories
+  if command -v uv &> /dev/null; then
+    echo "- UV package manager found: $(uv --version)"
+    echo "- UV path: $(which uv)"
+  else
+    echo "WARNING: UV package manager not found in PATH"
+
+    # Check if it exists in common locations
+    if [ -f "/root/.local/bin/uv" ]; then
+      echo "- Found UV in /root/.local/bin/uv"
+      # Use absolute path to run UV command to verify it works regardless of PATH
+      if /root/.local/bin/uv --version &> /dev/null; then
+        echo "- UV at /root/.local/bin/uv is executable"
+      else
+        echo "- UV at /root/.local/bin/uv is not executable, fixing permissions"
+        chmod +x /root/.local/bin/uv
+      fi
+    elif [ -f "/usr/local/bin/uv" ]; then
+      echo "- Found UV in /usr/local/bin/uv"
+      # Check if executable
+      if ! /usr/local/bin/uv --version &> /dev/null; then
+        echo "- UV at /usr/local/bin/uv is not executable, fixing permissions"
+        chmod +x /usr/local/bin/uv
+      fi
+    else
+      echo "ERROR: UV not found in any expected location"
+      echo "- Installing UV package manager"
+      # Install UV directly to /usr/local/bin to ensure it's in PATH
+      curl -sSf https://astral.sh/uv/install.sh | FORCE=1 sh -s -- --install-dir=/usr/local/bin
+
+      # Verify installation
+      if [ -f "/usr/local/bin/uv" ]; then
+        echo "- UV installed successfully to /usr/local/bin/uv"
+        chmod +x /usr/local/bin/uv
+      else
+        echo "ERROR: UV installation failed"
+        echo "- This may cause Python dependency installation to fail"
+      fi
+    fi
+  fi
+
+  # Ensure symbolic links exist for all found installations
+  if [ -f "/root/.local/bin/uv" ] && [ ! -f "/usr/local/bin/uv" ]; then
+    echo "- Creating symbolic link from /root/.local/bin/uv to /usr/local/bin/uv"
+    ln -sf /root/.local/bin/uv /usr/local/bin/uv
+    chmod +x /usr/local/bin/uv
+  elif [ -f "/usr/local/bin/uv" ] && [ ! -f "/root/.local/bin/uv" ]; then
+    echo "- Creating symbolic link from /usr/local/bin/uv to /root/.local/bin/uv"
+    mkdir -p /root/.local/bin
+    ln -sf /usr/local/bin/uv /root/.local/bin/uv
+    chmod +x /root/.local/bin/uv
+  fi
+
+  # Final validation
+  if command -v uv &> /dev/null; then
+    echo "- UV installation validated successfully: $(uv --version)"
+  else
+    echo "ERROR: UV installation could not be fixed"
+    echo "- Will attempt to continue but Python dependency installation may fail"
+  fi
+
+  echo "UV validation complete"
+}
+
 # BASH_FUNCTION::MAIN
 # Main entrypoint function
 main() {
@@ -214,6 +295,9 @@ main() {
 
   # Check environment
   check_environment
+
+  # Validate UV installation (early in the process)
+  validate_uv_installation
 
   # Setup directories
   setup_directories
