@@ -53,9 +53,10 @@
         }
     },
     "pathAlignments": {
-        "debtTemplatePath": ".github/templates/dev_debt_template.md",
+        "debtTemplatePath": ".github/debt-management/templates/dev_debt_template.md",
         "debtReportPath": ".github/reports/dev_debt/debt-report.md",
         "weeklyReportPath": ".github/reports/dev_debt/debt-weekly-report.md",
         "configPath": ".github/debt-management/config/debt-config.yml"
     }
 }
+

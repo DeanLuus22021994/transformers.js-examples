@@ -1,29 +1,49 @@
+# WF_ID::HEADER
 name: Weekly Technical Debt Report
 
+# WF_TRIGGER::SCHEDULE
 on:
   schedule:
+    # WF_TRIGGER_CRON::MONDAY_9AM
     - cron: "0 9 * * 1" # 9 AM every Monday
+  # WF_TRIGGER::MANUAL
   workflow_dispatch: # Allow manual triggering
 
+# WF_JOBS
 jobs:
+  # WF_JOB::generate-report
   generate-report:
+    # WF_JOB_NAME::generate-report
     name: Generate Technical Debt Report
+    # WF_JOB_RUNNER::ubuntu-latest
     runs-on: ubuntu-latest
 
+    # WF_JOB_STEPS::generate-report
     steps:
+      # WF_STEP::checkout
       - uses: actions/checkout@v3
 
+      # WF_STEP::generate_report_script
       - name: Generate debt report
         run: |
           bash .github/debt-management/scripts/generate-report.sh
 
+      # WF_STEP::create_issue
       - name: Create Issue for Report
+        # WF_STEP_CONDITION::on_success
         if: success()
+        # WF_STEP_ACTION::create-issue-from-file
         uses: peter-evans/create-issue-from-file@v4
         with:
+          # WF_STEP_PARAM::issue_title
           title: Weekly Technical Debt Report
+          # WF_STEP_PARAM::issue_content_path
           content-filepath: .github/reports/dev_debt/debt-weekly-report.md
+          # WF_STEP_PARAM::issue_labels
           labels: |
             report
             technical-debt
             documentation
+# WF_ID::FOOTER
+# SchemaVersion: 1.0.0
+# WorkflowID: weekly-debt-report

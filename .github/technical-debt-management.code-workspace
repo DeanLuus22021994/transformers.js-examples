@@ -1,0 +1,152 @@
+{
+	// Defines the folders included in the workspace view - Focused on Debt Management
+	"folders": [
+		{
+			"name": "Debt Management System", // Core system logic, scripts, configs
+			"path": ".github/debt-management"
+		},
+		{
+			"name": "GitHub Workflows", // CI/CD and automation related to debt
+			"path": ".github/workflows"
+		},
+		{
+			"name": "System Configuration", // Specific config files for the debt system
+			"path": ".github/config"
+		},
+		{
+			"name": "Templates & Instructions", // Debt templates and usage guides
+			"path": ".github/instructions"
+		},
+		{
+			"name": "Repository Root", // Access to root files like README, etc.
+			"path": "."
+		}
+	],
+	// Workspace-specific settings tailored for Technical Debt Management & Enhanced Copilot Context
+	"settings": {
+		// Exclude common build/dependency/generated folders from the file explorer
+		"files.exclude": {
+			"node_modules": true,
+			".git": true,
+			"dist": true,
+			"build": true,
+			"**/.DS_Store": true,
+			"**/*.js.map": true,
+			"**/*.tsbuildinfo": true,
+			"trace/logs": true, // Exclude debt engine logs directory
+			"trace/archives": true // Exclude debt engine archives
+		},
+		// Associate workflow files with YAML for better syntax highlighting and validation
+		"files.associations": {
+			"*.workflow": "yaml",
+			".github/debt-management/templates/*.md": "markdown"
+		},
+		// Enforce formatting on save for code consistency
+		"editor.formatOnSave": true,
+		// Default formatters for key languages used in debt management
+		"[javascript]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[typescript]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[json]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[jsonc]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[yaml]": {
+			"editor.defaultFormatter": "redhat.vscode-yaml"
+		},
+		"[markdown]": {
+			"editor.defaultFormatter": "yzhang.markdown-all-in-one",
+			"editor.wordWrap": "on" // Improve readability for Markdown debt documents
+		},
+		// PowerShell specific settings for debt management scripts
+		"powershell.scriptAnalysis.enable": true,
+		// ESLint settings for any JS/TS scripts involved
+		"eslint.validate": [
+			"javascript",
+			"typescript"
+		],
+		// Markdownlint configuration for debt documentation quality
+		"markdownlint.config": {
+			// Point to a potential shared config or define rules directly
+			// "config": ".github/config/markdownlint.jsonc",
+			"MD013": false // Example: Disable line length for flexibility in docs
+		},
+		// GitHub Copilot settings - Enhanced for Scaffolding and Context
+		"github.copilot.enable": {
+			"*": true,
+			"plaintext": true,
+			"markdown": true,
+			"powershell": true,
+			"yaml": true,
+			"jsonc": true
+		},
+		"copilot.inlineSuggest.enable": true,
+		// Integrate key repository patterns and templates directly into Copilot's context
+		"github.copilot.advanced": {
+			"contextSnippets": {
+				"debt-doc-template": "# Development Debt Document\\n\\n## Overview\\n[Brief description]\\n\\n## Action Items\\n- [ ] Task 1\\n\\n## Priority\\n[High/Medium/Low]\\n\\n## Estimated Effort\\n[Hours/Points]\\n\\n## Implementation Notes\\n[Details]\\n\\n## Acceptance Criteria\\n- [Criterion 1]\\n\\n## Related Files\\n- [path]\\n\\n## Dependencies\\n[deps]\\n\\n## Assigned To\\n[name]",
+				"vite-react-component": "// Basic Vite/React Component Structure\nimport React from 'react';\n\nfunction MyComponent(props) {\n  return (\n    <div>\n      {/* Component JSX */} \n    </div>\n  );\n}\n\nexport default MyComponent;",
+				"basic-web-worker": "// Basic Web Worker Structure (worker.js)\nimport { pipeline } from '@xenova/transformers';\n\nself.addEventListener('message', async (event) => {\n  // Retrieve the pipeline type and arguments from the message\n  const { type, args } = event.data;\n\n  try {\n    // Load the pipeline\n    const modelPipeline = await pipeline(type);\n\n    // Execute the pipeline\n    const result = await modelPipeline(...args);\n\n    // Send the result back to the main thread\n    self.postMessage({ status: 'complete', result });\n  } catch (error) {\n    self.postMessage({ status: 'error', error: error.message });\n  }\n});",
+				"github-action-job": "# Basic GitHub Action Job Structure\njobs:\n  my_job:\n    runs-on: ubuntu-latest\n    steps:\n      - name: Checkout code\n        uses: actions/checkout@v4\n      - name: Set up Node.js\n        uses: actions/setup-node@v4\n        with:\n          node-version: '20'\n      # Add more steps here",
+				"dir-tag-format": "# Directory Tagging Format (.dir-locals.psd1)\n# See: docs/technical-debt/dir-tag-format.md\n@{ \n    Debt = @{ \n        Status = '[Not Started|In Progress|Complete]' \n        Priority = '[Low|Medium|High]' \n        Effort = '[Small|Medium|Large|X-Large]' \n        AssignedTo = 'user@example.com' \n        Ticket = 'ISSUE-123' \n        Notes = 'Brief description of debt in this directory.' \n    } \n}"
+			}
+		},
+		// Custom workbench colors for visual distinction of this workspace
+		"workbench.colorCustomizations": {
+			"activityBar.background": "#1a4f6e", // Debt management theme color
+			"titleBar.activeBackground": "#2a8fbd",
+			"titleBar.activeForeground": "#ffffff"
+		},
+		"powershell.cwd": "GitHub Workflows"
+	},
+	// Recommended extensions crucial for Technical Debt Management workflow & General Productivity
+	"extensions": {
+		"recommendations": [
+			// Core Copilot for assistance
+			"github.copilot",
+			"github.copilot-chat",
+			// Language Support & Formatting
+			"ms-vscode.powershell", // For debt management scripts
+			"redhat.vscode-yaml", // For GitHub Actions workflows
+			"esbenp.prettier-vscode", // Consistent code formatting
+			"dbaeumer.vscode-eslint", // JavaScript/TypeScript linting
+			// Markdown - Essential for Debt Documentation
+			"yzhang.markdown-all-in-one", // Comprehensive Markdown support
+			"davidanson.vscode-markdownlint", // Markdown quality checks
+			// Docker - For running the debt scanner locally
+			"ms-azuretools.vscode-docker",
+			// Git - Understanding code history is key to debt context
+			"eamodio.gitlens",
+			// General TODO/FIXME Tracking (Best of both worlds)
+			"gruntfuggly.todo-tree"
+		]
+	},
+	// Debugging configurations relevant to the Debt Management System
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"name": "Debug: Validate File Alignment (PowerShell)",
+				"type": "PowerShell",
+				"request": "launch",
+				"script": "${workspaceFolder:Debt Management System}/scripts/validate-file-alignment.ps1",
+				"cwd": "${workspaceFolder:Repository Root}"
+			}
+			// Add configurations for debugging other debt system components if needed
+			// E.g., If the scanner was a Node.js script:
+			// {
+			// 	"name": "Debug: Debt Scanner (Node.js)",
+			// 	"type": "node",
+			// 	"request": "launch",
+			// 	"program": "${workspaceFolder:Debt Management System}/scripts/scanner.js",
+			// 	"cwd": "${workspaceFolder:Repository Root}",
+			// 	"skipFiles": ["<node_internals>/**"]
+			// }
+		]
+	}
+}

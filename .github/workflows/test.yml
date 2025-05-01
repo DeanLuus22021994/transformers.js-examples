@@ -1,48 +1,79 @@
+# WF_ID::TEST_WORKFLOW
 name: Test Transformers.js Examples
 
+# WF_TRIGGER::CODE_CHANGES
 on:
   push:
+    # WF_TRIGGER_BRANCHES::MAIN_ONLY
     branches: [ main ]
   pull_request:
+    # WF_TRIGGER_PR_BRANCHES::MAIN_ONLY
     branches: [ main ]
+  # WF_TRIGGER::MANUAL
   workflow_dispatch:
 
+# WF_JOBS
 jobs:
+  # WF_JOB::test-no-gpu
   test-no-gpu:
+    # WF_JOB_RUNNER::ubuntu-latest
     runs-on: ubuntu-latest
+    # WF_JOB_STEPS::test-no-gpu
     steps:
+      # WF_STEP::checkout
       - uses: actions/checkout@v3
 
+      # WF_STEP::setup_node
       - name: Set up Node.js
+        # WF_STEP_ACTION::setup-node
         uses: actions/setup-node@v3
         with:
+          # WF_STEP_PARAM::node_version
           node-version: '18'
+          # WF_STEP_PARAM::cache
           cache: 'npm'
 
+      # WF_STEP::install_deps
       - name: Install dependencies
         run: npm ci
 
+      # WF_STEP::run_tests
       - name: Run non-GPU tests
         run: npm run test:no-gpu
 
+  # WF_JOB::test-gpu
   test-gpu:
+    # WF_JOB_RUNNER::ubuntu-latest
     runs-on: ubuntu-latest
+    # WF_JOB_CONDITION::DISABLED
     if: false  # Disable for now as GitHub Actions runners don't have GPUs
                # Enable this job when using self-hosted runners with GPUs
+    # WF_JOB_STEPS::test-gpu
     steps:
+      # WF_STEP::checkout
       - uses: actions/checkout@v3
 
+      # WF_STEP::setup_node
       - name: Set up Node.js
+        # WF_STEP_ACTION::setup-node
         uses: actions/setup-node@v3
         with:
+          # WF_STEP_PARAM::node_version
           node-version: '18'
+          # WF_STEP_PARAM::cache
           cache: 'npm'
 
+      # WF_STEP::install_deps
       - name: Install dependencies
         run: npm ci
 
+      # WF_STEP::check_gpu
       - name: Check GPU status
         run: nvidia-smi || echo "No GPU detected"
 
+      # WF_STEP::run_gpu_tests
       - name: Run GPU-dependent tests
         run: npm run test:gpu
+# WF_ID::FOOTER
+# SchemaVersion: 1.0.0
+# WorkflowID: test-transformers-js

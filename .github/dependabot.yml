@@ -1,12 +1,21 @@
+# DPB_ID::HEADER
 # To get started with Dependabot version updates, you'll need to specify which
 # package ecosystems to update and where the package manifests are located.
 # Please see the documentation for more information:
 # https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 # https://containers.dev/guide/dependabot
 
+# DPB_CONFIG::VERSION
 version: 2
+# DPB_CONFIG::UPDATES
 updates:
- - package-ecosystem: "devcontainers"
-   directory: "/"
-   schedule:
-     interval: weekly
+  # DPB_UPDATE::DEVCONTAINERS
+  - package-ecosystem: "devcontainers"
+    # DPB_UPDATE_DIR::ROOT
+    directory: "/"
+    # DPB_UPDATE_SCHEDULE::WEEKLY
+    schedule:
+      interval: weekly
+# DPB_ID::FOOTER
+# SchemaVersion: 1.0.0
+# ConfigID: dependabot-config

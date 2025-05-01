@@ -1,28 +1,48 @@
+# WF_ID::DEBT_SCANNER
 name: Technical Debt Scanner
 
+# WF_TRIGGER::CODE_CHANGES
 on:
   push:
+    # WF_TRIGGER_BRANCHES::MAIN
     branches: [main, master, develop]
   pull_request:
+    # WF_TRIGGER_PR_BRANCHES::MAIN
     branches: [main, master, develop]
+  # WF_TRIGGER::MANUAL
   workflow_dispatch: # Allow manual triggering
 
+# WF_JOBS
 jobs:
+  # WF_JOB::scan-debt
   scan-debt:
+    # WF_JOB_NAME::scan-debt
     name: Scan for technical debt markers
+    # WF_JOB_RUNNER::ubuntu-latest
     runs-on: ubuntu-latest
 
+    # WF_JOB_STEPS::scan-debt
     steps:
+      # WF_STEP::checkout
       - uses: actions/checkout@v3
         with:
+          # WF_STEP_PARAM::fetch-depth
           fetch-depth: 0
 
+      # WF_STEP::run_scanner
       - name: Run debt scanner
         run: |
           bash .github/debt-management/scripts/scan-debt.sh
 
+      # WF_STEP::upload_report
       - name: Upload debt report
+        # WF_STEP_ACTION::upload-artifact
         uses: actions/upload-artifact@v3
         with:
+          # WF_STEP_PARAM::artifact_name
           name: technical-debt-report
+          # WF_STEP_PARAM::artifact_path
           path: .github/reports/dev_debt/debt-report.md
+# WF_ID::FOOTER
+# SchemaVersion: 1.0.0
+# WorkflowID: debt-scanner
