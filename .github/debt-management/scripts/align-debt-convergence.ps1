@@ -1,3 +1,4 @@
+# PS_ID::ALIGN_DEBT_CONVERGENCE
 <#
 .SYNOPSIS
     Aligns debt management structure with extension development objectives.
@@ -7,25 +8,30 @@
     measures progression, and enables retrospective analysis.
 #>
 
+# PS_CONFIG::ERROR_HANDLING
 $ErrorActionPreference = "Stop"
 Write-Host "Starting Debt Management & Extension Convergence..." -ForegroundColor Cyan
 
+# PS_DEFINE::PATHS
 # Define paths
 $rootDir = Join-Path $PSScriptRoot "..\..\\"
 $githubDir = Join-Path $rootDir ".github"
 # $copilotDir = Join-Path $rootDir ".copilot"
 # $tempDir = Join-Path $rootDir ".temp_migration"
 
+# PS_CONFIG::METRICS
 # Configuration for convergence metrics
 $metricsFile = Join-Path $githubDir "metrics\convergence-metrics.json"
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
+# PS_ACTION::ENSURE_METRICS_DIR
 # Ensure metric directory exists
 $metricsDir = Join-Path $githubDir "metrics"
 if (-not (Test-Path $metricsDir)) {
 	New-Item -Path $metricsDir -ItemType Directory -Force | Out-Null
 }
 
+# PS_ACTION::INIT_METRICS
 # Initialize metrics if they don't exist
 if (-not (Test-Path $metricsFile)) {
 	$metrics = @{
@@ -42,6 +48,7 @@ else {
 	$metrics = Get-Content -Path $metricsFile -Encoding UTF8 | ConvertFrom-Json
 }
 
+# PS_FUNCTION::ADD_CONVERGENCE_METRIC
 # Helper function to record metrics
 function Add-ConvergenceMetric {
 	param(
@@ -51,6 +58,7 @@ function Add-ConvergenceMetric {
 		[string]$detail
 	)
 
+	# PS_FUNCTION_ACTION::CREATE_ITERATION
 	$iteration = @{
 		"timestamp" = $timestamp
 		"category"  = $category
@@ -59,6 +67,7 @@ function Add-ConvergenceMetric {
 		"detail"    = $detail
 	}
 
+	# PS_FUNCTION_ACTION::UPDATE_METRICS
 	$metrics.iterations += $iteration
 
 	if ($status -eq "success") {
@@ -69,9 +78,11 @@ function Add-ConvergenceMetric {
 		$metrics.pendingTasks += "${category} - ${action}: ${detail}"
 	}
 
+	# PS_FUNCTION_ACTION::SAVE_METRICS
 	$metrics.lastRun = $timestamp
 	$metrics | ConvertTo-Json -Depth 10 | Set-Content -Path $metricsFile -Encoding UTF8
 
+	# PS_FUNCTION_ACTION::LOG_RESULT
 	if ($status -eq "success") {
 		Write-Host "✅ $($category) - $($action)" -ForegroundColor Green
 	}
@@ -80,6 +91,7 @@ function Add-ConvergenceMetric {
 	}
 }
 
+# PS_SECTION::SCHEMA_DEFINITION
 # 1. Create strict structural definition schema
 Write-Host "Establishing structural definition schema..." -ForegroundColor Cyan
 $schemaDir = Join-Path $githubDir "schemas"
@@ -91,6 +103,7 @@ else {
 	Add-ConvergenceMetric -category "Structure" -action "Check Schema Directory" -status "success" -detail "Schema directory already exists"
 }
 
+# PS_ACTION::DEFINE_DEBT_SCHEMA
 # Define schema for debt management
 $debtSchemaFile = Join-Path $schemaDir "debt-management-schema.json"
 if (-not (Test-Path $debtSchemaFile)) {
